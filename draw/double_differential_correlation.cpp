@@ -13,6 +13,8 @@ void DoubleDifferentialCorrelation::Calculate() {
     auto hi = slice_axis_.GetUpperBinEdge(slice_bin);
     auto proj_container = correlation_.Select( {name, 1, lo, hi} );
     proj_container = proj_container.Projection({projection_axis_.Name()});
+    lo += slice_axis_shift_;
+    hi += slice_axis_shift_;
     std::string graph_name{ name+"_"+std::to_string(lo)+"-"+std::to_string(hi) };
     projection_points_.push_back( Qn::ToTGraph( proj_container ) );
     projection_points_.back()->SetName( graph_name.c_str() );
@@ -71,12 +73,12 @@ void DoubleDifferentialCorrelation::SetErrorOption(
   error_option_ = error_option;
 }
 
-void DoubleDifferentialCorrelation::RecalculateXaxis( const std::vector<double>& x_axis ){
+void DoubleDifferentialCorrelation::RecalculateProjectionAxis( const std::vector<double>& x_axis ){
   for(auto& p : projections_)
     p->RecalculateXaxis(x_axis);  
 }
 
-void DoubleDifferentialCorrelation::ShiftXaxis( const float value ){
+void DoubleDifferentialCorrelation::ShiftProjectionAxis( const float value ){
   for(auto& p : projections_)
     p->ShiftXaxis(value);  
 }

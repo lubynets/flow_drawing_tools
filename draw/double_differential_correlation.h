@@ -64,13 +64,19 @@ public:
   void Calculate();
   void SaveToFile( const std::string& file_name );
   void SetErrorOption(const std::string &error_option);
-  void RecalculateXaxis( const std::vector<double>& x_axis );
-  void ShiftXaxis( const float value );
+  void RecalculateProjectionAxis( const std::vector<double>& x_axis );
+  
+  // ShiftProjectionAxis() must be called after Calculate()
+  void ShiftProjectionAxis( const float value );
+  
+  // ShiftSliceAxis() must be called after SetSliceAxis() but before Calculate()
+  void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
 protected:
   void FillGraphs();
   Qn::DataContainerStatCalculate correlation_;
   Qn::AxisD projection_axis_;
   Qn::AxisD slice_axis_;
+  float slice_axis_shift_{0};
   std::vector<TGraphErrors*> projection_points_;
   std::string slice_variable_name_;
   std::string slice_variable_units_;
