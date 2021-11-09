@@ -13,7 +13,7 @@ void HeapPicture::Draw() {
   }
   for( auto obj : drawable_objects_ ){
     if( obj->IsLine() ) {
-      std::string opt{"L+" + obj->GetErrorOption()};
+      std::string opt{"L+X+" + obj->GetErrorOption()};
       stack_->Add(obj->GetPoints(), opt.c_str());
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
@@ -81,6 +81,14 @@ void HeapPicture::SetAxisTitles(const std::vector<std::string> &axis_titles) {
   auto title = ";"+axis_titles.at(0)+";"+axis_titles.at(1);
   stack_->SetTitle( title.c_str() );
 }
+
+void HeapPicture::CustomizeYRange(const float part){
+  const float diff = max_ - min_;
+  const float up = max_ + (1-part)/2*diff/part;
+  const float down = min_ - (1-part)/2*diff/part;
+  SetYRange({down, up});
+}
+
 HeapPicture::HeapPicture(const std::string &name,
                          const std::array<int, 2> &resolution)
     : Picture(name, resolution) {}
