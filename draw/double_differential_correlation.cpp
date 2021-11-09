@@ -70,3 +70,13 @@ void DoubleDifferentialCorrelation::SetErrorOption(
     const std::string &error_option) {
   error_option_ = error_option;
 }
+
+void DoubleDifferentialCorrelation::RecalculateXaxis( const std::vector<double>& x_axis ){
+  for(auto& p : projections_)
+    p->RecalculateXaxis(x_axis);  
+}
+
+void DoubleDifferentialCorrelation::ShiftXaxis( const float value ){
+  for(auto& p : projections_)
+    p->ShiftXaxis(value);  
+}

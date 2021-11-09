@@ -45,6 +45,12 @@ void Graph::RecalculateXaxis( const std::vector<double>& x_axis ){
   }
 }
 
+void Graph::ShiftXaxis( const float value ){
+  for(int i=0; i<points_->GetN(); i++){
+    auto x = points_->GetPointX(i);
+    points_->SetPointX(i, x+value);
+  }
+}
 
 Graph::Graph(const std::string &file_name,
              const std::vector<std::string> &objects, const std::string &title)

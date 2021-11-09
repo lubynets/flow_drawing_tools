@@ -64,6 +64,8 @@ public:
   void Calculate();
   void SaveToFile( const std::string& file_name );
   void SetErrorOption(const std::string &error_option);
+  void RecalculateXaxis( const std::vector<double>& x_axis );
+  void ShiftXaxis( const float value );
 protected:
   void FillGraphs();
   Qn::DataContainerStatCalculate correlation_;
