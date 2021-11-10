@@ -82,10 +82,17 @@ void HeapPicture::SetAxisTitles(const std::vector<std::string> &axis_titles) {
   stack_->SetTitle( title.c_str() );
 }
 
+void HeapPicture::CustomizeXRange(const float part){
+  const float diff = xmax_ - xmin_;
+  const float up = xmax_ + (1-part)/2*diff/part;
+  const float down = xmin_ - (1-part)/2*diff/part;
+  SetXRange({down, up});
+}
+
 void HeapPicture::CustomizeYRange(const float part){
-  const float diff = max_ - min_;
-  const float up = max_ + (1-part)/2*diff/part;
-  const float down = min_ - (1-part)/2*diff/part;
+  const float diff = ymax_ - ymin_;
+  const float up = ymax_ + (1-part)/2*diff/part;
+  const float down = ymin_ - (1-part)/2*diff/part;
   SetYRange({down, up});
 }
 

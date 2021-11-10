@@ -15,8 +15,10 @@ public:
   void AddDrawable( DrawableObject* obj ){
     assert(obj);
     drawable_objects_.push_back(obj);
-    min_ = std::min(min_, (float)obj->GetPoints()->GetYaxis()->GetXmin());
-    max_ = std::max(max_, (float)obj->GetPoints()->GetYaxis()->GetXmax());    
+    xmin_ = std::min(xmin_, (float)obj->GetPoints()->GetXaxis()->GetXmin());
+    xmax_ = std::max(xmax_, (float)obj->GetPoints()->GetXaxis()->GetXmax());    
+    ymin_ = std::min(ymin_, (float)obj->GetPoints()->GetYaxis()->GetXmin());
+    ymax_ = std::max(ymax_, (float)obj->GetPoints()->GetYaxis()->GetXmax());    
   }
   void AddDrawables( const std::vector<DrawableObject*>& objects ){
     for( auto obj : objects ){
@@ -26,12 +28,15 @@ public:
   void SetAxisTitles(const std::vector<std::string> &axis_titles) override;
   void Draw() override;
   TCanvas* GetCanvas() { return canvas_; }
+  void CustomizeXRange(const float part=1.);
   void CustomizeYRange(const float part=1.);
 
 protected:
   std::vector<DrawableObject*> drawable_objects_;
-  float min_ =  999.;
-  float max_ = -999.;
+  float xmin_ =  999.;
+  float xmax_ = -999.;
+  float ymin_ =  999.;
+  float ymax_ = -999.;
   ClassDefOverride(HeapPicture, 1)
 };
 
