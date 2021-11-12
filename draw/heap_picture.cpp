@@ -4,6 +4,7 @@
 
 #include "heap_picture.h"
 #include "TH1.h"
+#include "TLegendEntry.h"
 ClassImp(HeapPicture)
 
 void HeapPicture::Draw() {
@@ -82,18 +83,129 @@ void HeapPicture::SetAxisTitles(const std::vector<std::string> &axis_titles) {
   stack_->SetTitle( title.c_str() );
 }
 
-void HeapPicture::CustomizeXRange(const float part){
+void HeapPicture::CustomizeXRange(const float part) {
   const float diff = xmax_ - xmin_;
   const float up = xmax_ + (1-part)/2*diff/part;
   const float down = xmin_ - (1-part)/2*diff/part;
   SetXRange({down, up});
 }
 
-void HeapPicture::CustomizeYRange(const float part){
+void HeapPicture::CustomizeYRange(const float part) {
   const float diff = ymax_ - ymin_;
   const float up = ymax_ + (1-part)/2*diff/part;
   const float down = ymin_ - (1-part)/2*diff/part;
   SetYRange({down, up});
+}
+
+void HeapPicture::CustomizeLegend(TLegend* leg) {
+  
+  const float start = 0.03;
+  const float stop = 0.97;
+  const float middle = 0.5;
+  
+  const float width = GetOptimalLegendSize(leg).first;
+  const float height = GetOptimalLegendSize(leg).second;
+  
+  std::vector<std::vector<float>> places {
+    {stop - width, stop - height, stop, stop},  // top right
+    {middle - width/2, stop - height, middle + width/2, stop},  // top
+//     {start, stop - height, start + width, stop},  // top left
+    {stop - width, middle - height/2, stop, middle + height/2},  // right
+    {start, middle - height/2, start + width, middle + height/2},  // left
+    {start, start, start + width, start + height},  // bottom left
+    {stop - width, start, stop, start + height},  // bottom right
+    {middle - width/2, start, middle + width/2, start + height},  // bottom
+    {middle - width/2, middle - height/2, middle + width/2, middle + height/2}  // center
+  };
+  
+  for(auto& pl : places) {
+    bool is_good_place = true;
+    std::vector<float> place_user = TransformToUser(canvas_, pl);
+    for(auto& drob : drawable_objects_) {
+      TGraph* gr = (TGraph*)drob->GetPoints();
+      if(OverlapWithGraph(gr, place_user)) {
+        is_good_place = false;
+        break;
+      }
+    }
+    if(is_good_place) {
+      leg -> SetX1(place_user.at(kX1));
+      leg -> SetY1(place_user.at(kY1));
+      leg -> SetX2(place_user.at(kX2));
+      leg -> SetY2(place_user.at(kY2));
+      leg -> SetOption("br");
+      leg -> SetBorderSize(0);
+      return;
+    }
+  }
+    std::vector<float> place_user = TransformToUser(canvas_, places.at(0));
+    leg -> SetX1(place_user.at(kX1));
+    leg -> SetY1(place_user.at(kY1));
+    leg -> SetX2(place_user.at(kX2));
+    leg -> SetY2(place_user.at(kY2));
+    leg -> SetOption("br");
+}
+
+bool HeapPicture::OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const {
+  if(rect1.at(kX1) > rect2.at(kX2) || rect1.at(kX2) < rect2.at(kX1))
+    return false;
+  if(rect1.at(kY1) > rect2.at(kY2) || rect1.at(kY2) < rect2.at(kY1))
+    return false;
+  
+  return true;
+}
+
+std::vector<float> HeapPicture::TransformToUser(TCanvas* canvas, std::vector<float> x) const {
+  // Transforms from Pad coordinates to User coordinates.
+  // This can probably be replaced by using the built-in conversion commands.
+
+  const float xstart = x_range_.at(0);
+  const float xlength = x_range_.at(1) - xstart;
+  float xlow = xlength * x.at(kX1) + xstart;
+  float xhigh = xlength * x.at(kX2) + xstart;
+//   if (canvas->GetLogx()) {
+//     xlow = std::pow(10, xlow);
+//     xhigh = std::pow(10, xhigh);
+//   }
+
+  const float ystart = y_range_.at(0);
+  const float ylength = y_range_.at(1) - ystart;
+  float ylow = ylength * x.at(kY1) + ystart;
+  float yhigh = ylength * x.at(kY2) + ystart;
+//   if (canvas->GetLogy()) {
+//     ylow = std::pow(10, ylow);
+//     yhigh = std::pow(10, yhigh);
+//   }
+     
+  return {xlow, ylow, xhigh, yhigh};
+}
+
+bool HeapPicture::OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const {
+  for(int i=0; i<graph->GetN(); i++) {
+    const float x = graph->GetPointX(i);
+    const float y = graph->GetPointY(i);
+    const float ex = std::max(graph->GetErrorX(i), (graph->GetPointX(1)-graph->GetPointX(0))/4.);
+    const float ey = std::max(graph->GetErrorY(i), (graph->GetPointX(1)-graph->GetPointX(0))/4.);
+    
+    if(OverlapRectangles(rect2, {x-ex, y-ey, x+ex, y+ey}))
+      return true;
+  }
+  return false;
+}
+
+std::pair<float, float> HeapPicture::GetOptimalLegendSize(TLegend* leg) const {
+  int max_length = -1;
+  TList* primitives = leg->GetListOfPrimitives();
+  for(int iP=0; iP<primitives->GetEntries(); iP++) {
+    TLegendEntry* lentry = (TLegendEntry*)primitives->At(iP);
+    std::string label = lentry->GetLabel();
+    int length = label.length();
+    max_length = std::max(max_length, length);
+  }
+  const int nrows = leg->GetNRows();
+  const float width = 0.012 + 0.012 * max_length;
+  const float height = 0.03 * nrows;
+  return {width, height}; 
 }
 
 HeapPicture::HeapPicture(const std::string &name,

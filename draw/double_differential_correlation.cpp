@@ -22,7 +22,7 @@ void DoubleDifferentialCorrelation::Calculate() {
     stream_lo << std::setprecision(2) << lo;
     std::ostringstream stream_hi;
     stream_hi << std::setprecision(2) << hi;
-    std::string title{ stream_lo.str()+" < "+ slice_variable_name_ +" < "+stream_hi.str()+", "+slice_variable_units_ };
+    std::string title{ stream_lo.str()+" < "+ slice_variable_name_ +" < "+stream_hi.str()+slice_variable_units_ };
     projection_points_.back()->SetTitle(title.c_str());
   }
   FillGraphs();
