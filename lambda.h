@@ -21,42 +21,35 @@ std::vector<Axis> axes
   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y_{CM}", "", {}, -1.6217901, 1},
   {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "C", ", %", {}, 0., 0}
 };
+
+std::pair<std::string, std::string> harmonic1{"x1x1", "y1y1"};
+std::pair<std::string, std::string> harmonic2{"x2x2", "y2y2"};
   
 void SetFileName(const std::string& filename){
   fileName_ = filename;
 }
 
-void SetSelectAxis(const std::string& name){
+void SetAxis(const std::string& name, const std::string& type) {
   int i=0;
   for(auto& ax : axes){
     if(ax.name_ == name){
-      kSelect = i;
+      if(type == "select") {
+        kSelect = i;
+      }
+      else if(type == "slice") {
+        kSlice = i;
+      }
+      else if(type == "projection") {
+        kProjection = i;
+      }
+      else
+        std::cout << "No axis with type " << type << "\n";
       break;
     }
     i++;
   }
-}
-
-void SetProjectionAxis(const std::string& name){
-  int i=0;
-  for(auto& ax : axes){
-    if(ax.name_ == name){
-      kProjection = i;
-      break;
-    }
-    i++;
-  }
-}
-
-void SetSliceAxis(const std::string& name){
-  int i=0;
-  for(auto& ax : axes){
-    if(ax.name_ == name){
-      kSlice = i;
-      break;
-    }
-    i++;
-  }
+  if(i == axes.size())
+    std::cout << "No axis with name " << name << "\n";
 }
 
 template <typename T>
