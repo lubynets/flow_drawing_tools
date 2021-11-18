@@ -99,24 +99,89 @@ void HeapPicture::CustomizeYRange(const float part) {
 
 void HeapPicture::CustomizeLegend(TLegend* leg) {
   
-  const float start = 0.03;
-  const float stop = 0.97;
+  const float zero = 0.;
+  const float one = 1.;
   const float middle = 0.5;
+  
+  const float leftspace = 0.04;
+  const float rightspace = 0.02;
+  const float topspace = 0.02;
+  const float bottomspace = 0.04;
+  
+  const int Nspaces = 3;
   
   const float width = GetOptimalLegendSize(leg).first;
   const float height = GetOptimalLegendSize(leg).second;
   
-  std::vector<std::vector<float>> places {
-    {stop - width, stop - height, stop, stop},  // top right
-    {middle - width/2, stop - height, middle + width/2, stop},  // top
-//     {start, stop - height, start + width, stop},  // top left
-    {stop - width, middle - height/2, stop, middle + height/2},  // right
-    {start, middle - height/2, start + width, middle + height/2},  // left
-    {start, start, start + width, start + height},  // bottom left
-    {stop - width, start, stop, start + height},  // bottom right
-    {middle - width/2, start, middle + width/2, start + height},  // bottom
-    {middle - width/2, middle - height/2, middle + width/2, middle + height/2}  // center
-  };
+  std::vector<std::vector<float>> places;
+  
+  for(int i=1; i<=Nspaces; i++)  // top right
+    for(int j=1; j<=Nspaces; j++) {
+      const float x_stop = one - i*rightspace;
+      const float y_stop = one - j*topspace;
+      const float x_start = x_stop - width;
+      const float y_start = y_stop - height;
+      places.push_back({x_start, y_start, x_stop, y_stop});
+    }
+  
+//   for(int i=1; i<=Nspaces; i++)  // top left
+//     for(int j=1; j<=Nspaces; j++) {
+//       const float x_start = zero + i*leftspace;
+//       const float y_stop = one - j*topspace;
+//       const float x_stop = x_start + width;
+//       const float y_start = y_stop - height;
+//       places.push_back({x_start, y_start, x_stop, y_stop});
+//     }
+  
+  for(int j=1; j<=Nspaces; j++) { // top
+    const float x_stop = middle + width/2;
+    const float y_stop = one - j*topspace;
+    const float x_start = middle - width/2;
+    const float y_start = y_stop - height;
+    places.push_back({x_start, y_start, x_stop, y_stop});
+  }
+  
+  for(int i=1; i<=Nspaces; i++) { // right
+    const float x_stop = one - i*rightspace;
+    const float y_stop = middle + height/2;
+    const float x_start = x_stop - width;
+    const float y_start = middle - height/2;
+    places.push_back({x_start, y_start, x_stop, y_stop});
+  }
+  
+  for(int i=1; i<=Nspaces; i++) { // left
+    const float x_start = zero + i*leftspace;
+    const float y_stop = middle + height/2;
+    const float x_stop = x_start + width;
+    const float y_start = middle - height/2;
+    places.push_back({x_start, y_start, x_stop, y_stop});
+  }
+  
+  for(int i=1; i<=Nspaces; i++)  // bottom right
+    for(int j=1; j<=Nspaces; j++) {
+      const float x_stop = one - i*rightspace;
+      const float y_start = zero + j*bottomspace;
+      const float x_start = x_stop - width;
+      const float y_stop = y_start + height;
+      places.push_back({x_start, y_start, x_stop, y_stop});
+    }  
+    
+  for(int i=1; i<=Nspaces; i++)  // bottom left
+    for(int j=1; j<=Nspaces; j++) {
+      const float x_start = zero + i*leftspace;
+      const float y_start = zero + j*bottomspace;
+      const float x_stop = x_start + width;
+      const float y_stop = y_start + height;
+      places.push_back({x_start, y_start, x_stop, y_stop});
+    }  
+    
+  for(int j=1; j<=Nspaces; j++) { // bottom
+    const float x_start = middle - width/2;
+    const float y_start = zero + j*bottomspace;
+    const float x_stop = middle + width/2;
+    const float y_stop = y_start + height;
+    places.push_back({x_start, y_start, x_stop, y_stop});
+  }    
   
   for(auto& pl : places) {
     bool is_good_place = true;
@@ -181,11 +246,15 @@ std::vector<float> HeapPicture::TransformToUser(TCanvas* canvas, std::vector<flo
 }
 
 bool HeapPicture::OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const {
+  const float y2x = (y_range_.at(1) - y_range_.at(0))/(x_range_.at(1) - x_range_.at(0));
+  const double minex = (graph->GetPointX(1)-graph->GetPointX(0))/4.;
+  const double miney = minex*y2x;
+  
   for(int i=0; i<graph->GetN(); i++) {
     const float x = graph->GetPointX(i);
     const float y = graph->GetPointY(i);
-    const float ex = std::max(graph->GetErrorX(i), (graph->GetPointX(1)-graph->GetPointX(0))/4.);
-    const float ey = std::max(graph->GetErrorY(i), (graph->GetPointX(1)-graph->GetPointX(0))/4.);
+    const float ex = std::max(graph->GetErrorX(i), minex);
+    const float ey = std::max(graph->GetErrorY(i), miney);
     
     if(OverlapRectangles(rect2, {x-ex, y-ey, x+ex, y+ey}))
       return true;
