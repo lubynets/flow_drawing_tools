@@ -21,9 +21,6 @@ std::vector<Axis> axes
   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y_{CM}", "", {}, -1.6217901, 1},
   {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "C", ", %", {}, 0., 0}
 };
-
-std::pair<std::string, std::string> harmonic1{"x1x1", "y1y1"};
-std::pair<std::string, std::string> harmonic2{"x2x2", "y2y2"};
   
 void SetFileName(const std::string& filename){
   fileName_ = filename;
@@ -50,6 +47,10 @@ void SetAxis(const std::string& name, const std::string& type) {
   }
   if(i == axes.size())
     std::cout << "No axis with name " << name << "\n";
+}
+
+void IntegrateSelectAxis() {
+  axes.at(kSelect).bin_edges_ = {*axes.at(kSelect).bin_edges_.begin(), *(axes.at(kSelect).bin_edges_.end()-1)};
 }
 
 template <typename T>

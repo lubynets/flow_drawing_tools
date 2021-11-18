@@ -10,11 +10,25 @@ void lambda(){
 //   auto leg1 = new TLegend( 0.65, 0.75, 0.9, 0.945 );
   bool is_first_canvas = true;
   
-  SetFileName("/home/user/cbmdir/working/qna/cl.dcmqgsm.12agev.defcuts.3122.set1.sgnl_1.root");
+//   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3122.set1.sgnl_1.root");
+//   std::string particle = "#Lambda";
   
-  SetAxis("centrality", "select");
-  SetAxis("rapidity", "projection");
-  SetAxis("pT", "slice");
+  SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.310.set1.sgnl_1.root");
+  std::string particle = "K^{0}_{S}";
+  
+//   SetAxis("centrality", "select");
+//   SetAxis("rapidity", "projection");
+//   SetAxis("pT", "slice");
+//   std::string component_1 = "x1x1";
+//   std::string component_2 = "y1y1";
+//   std::string harmonic = "1";
+  
+  SetAxis("rapidity", "select");
+  SetAxis("pT", "projection");
+  SetAxis("centrality", "slice");
+  std::string component_1 = "x2x2";
+  std::string component_2 = "y2y2";
+  std::string harmonic = "2";
     
   TFile* fileIn = TFile::Open(fileName_.c_str(), "open");
   auto* dc = (Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>>("sim/u_sim_PLAIN.Q_psi_PLAIN.x1x1");
@@ -24,14 +38,14 @@ void lambda(){
       ax.bin_edges_.push_back(qnaxis.GetLowerBinEdge(i));
     }
   }
-    
+  
+  if(harmonic == "2")
+    IntegrateSelectAxis();
+      
   TFile* fileOut = TFile::Open("fileOut.root", "recreate");
     
   for(int iEdge=0; iEdge<axes.at(kSelect).bin_edges_.size()-1; iEdge++){
-    
-    std::string component_1 = "x1x1";
-    std::string component_2 = "y1y1";
-    
+
     auto v1_rec = DoubleDifferentialCorrelation( fileName_.c_str(),
                                                 {("rec/RESCALED/u_rec_RESCALED.Q_psi_PLAIN." + component_1).c_str(),
                                                  ("rec/RESCALED/u_rec_RESCALED.Q_psi_PLAIN." + component_2).c_str() } );
@@ -85,7 +99,7 @@ void lambda(){
       pic.AddDrawable( obj );
     }
 
-    pic.SetAxisTitles({(axes.at(kProjection).title_ + axes.at(kProjection).unit_).c_str(), "v_{1} {#Lambda}"});
+    pic.SetAxisTitles({(axes.at(kProjection).title_ + axes.at(kProjection).unit_).c_str(), ("v_{" + harmonic + "} {" + particle + "}").c_str()});
 
     pic.CustomizeXRange();
     pic.CustomizeYRange();
