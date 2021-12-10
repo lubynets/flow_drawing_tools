@@ -17,7 +17,8 @@ void DoubleDifferentialCorrelation::Calculate() {
     hi += slice_axis_shift_;
     std::string graph_name{ name+"_"+std::to_string(lo)+"-"+std::to_string(hi) };
     projection_points_.push_back( Qn::ToTGraph( proj_container ) );
-    projection_points_.back()->SetName( graph_name.c_str() );
+//     projection_points_.back()->SetName( graph_name.c_str() );
+    projection_points_.back()->SetName( "gra" );
     std::ostringstream stream_lo;
     stream_lo << std::setprecision(2) << lo;
     std::ostringstream stream_hi;
