@@ -19,6 +19,7 @@ std::vector<Axis> axes
 {
   {"pT", "SimParticles_pT", "ReconstructedParticles_pT", "p_{T}", ", GeV/c", {}, 0., 1},
   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y_{CM}", "", {}, -1.6217901, 1},
+//   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y_{CM}", "", {}, -0.985344, 1},
   {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "C", ", %", {}, 0., 0}
 };
   
@@ -50,14 +51,21 @@ void SetAxis(const std::string& name, const std::string& type) {
 }
 
 void IntegrateSelectAxis() {
-  axes.at(kSelect).bin_edges_ = {*axes.at(kSelect).bin_edges_.begin(), *(axes.at(kSelect).bin_edges_.end()-1)};
+  axes.at(kSelect).bin_edges_ = {axes.at(kSelect).bin_edges_.front(), axes.at(kSelect).bin_edges_.back()};
 }
 
+void IntegrateSliceAxis() {
+  axes.at(kSlice).bin_edges_ = {axes.at(kSlice).bin_edges_.front(), axes.at(kSlice).bin_edges_.back()};
+}
+
+void SetSelectAxisBinEdges(std::vector<double> binedges){ axes.at(kSelect).bin_edges_ = binedges; };
+void SetSliceAxisBinEdges(std::vector<double> binedges){ axes.at(kSlice).bin_edges_ = binedges; };
+void SetProjectionAxisBinEdges(std::vector<double> binedges){ axes.at(kProjection).bin_edges_ = binedges; };
+
 template <typename T>
-std::string to_string_with_precision(const T a_value, const int n = 6)
-{
-    std::ostringstream out;
-    out.precision(n);
-    out << std::fixed << a_value;
-    return out.str();
+std::string to_string_with_precision(const T a_value, const int n = 6) {
+  std::ostringstream out;
+  out.precision(n);
+  out << std::fixed << a_value;
+  return out.str();
 }
