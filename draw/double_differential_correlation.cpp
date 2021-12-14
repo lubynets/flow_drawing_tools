@@ -15,15 +15,14 @@ void DoubleDifferentialCorrelation::Calculate() {
     proj_container = proj_container.Projection({projection_axis_.Name()});
     lo += slice_axis_shift_;
     hi += slice_axis_shift_;
-    std::string graph_name{ name+"_"+std::to_string(lo)+"-"+std::to_string(hi) };
+    std::string graph_name{ name+"_"+std::to_string(slice_bin) };
     projection_points_.push_back( Qn::ToTGraph( proj_container ) );
-//     projection_points_.back()->SetName( graph_name.c_str() );
-    projection_points_.back()->SetName( "gra" );
+    projection_points_.back()->SetName( graph_name.c_str() );
     std::ostringstream stream_lo;
     stream_lo << std::setprecision(2) << lo;
     std::ostringstream stream_hi;
     stream_hi << std::setprecision(2) << hi;
-    std::string title{ stream_lo.str()+" < "+ slice_variable_name_ +" < "+stream_hi.str()+slice_variable_units_ };
+    std::string title{ stream_lo.str()+" - "+stream_hi.str() };
     projection_points_.back()->SetTitle(title.c_str());
   }
   FillGraphs();

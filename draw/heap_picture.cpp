@@ -14,8 +14,10 @@ void HeapPicture::Draw() {
   }
   for( auto obj : drawable_objects_ ){
     if( obj->IsLine() ) {
-      std::string opt{"L+X+" + obj->GetErrorOption()};
+//       std::string opt{"L+X+" + obj->GetErrorOption()};
+      std::string opt{"E3" + obj->GetErrorOption()};
       stack_->Add(obj->GetPoints(), opt.c_str());
+//       obj->GetPoints()->SetFillStyle(4050);
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
     } else {
