@@ -16,29 +16,29 @@ void lambda(){
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.master.root");
 //   std::string particle = "#Lambda";
   
-//   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3312.set1.sgnl_1.root");
+  SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3312.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.3312.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.3.3agev.defcuts.3312.set1.sgnl_1.root");
-//   std::string particle = "#Xi^{-}";
+  std::string particle = "#Xi^{-}";
   
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.310.set1.sgnl_1.root");
-  SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.310.set1.sgnl_1.root");
+//   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.310.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.3.3agev.defcuts.310.set1.sgnl_1.root");
-  std::string particle = "K^{0}_{S}";
+//   std::string particle = "K^{0}_{S}";
   
-  SetAxis("centrality", "select");
-  SetAxis("rapidity", "projection");
-  SetAxis("pT", "slice");
-  std::string component_1 = "x1x1";
-  std::string component_2 = "y1y1";
-  std::string harmonic = "1";
+//   SetAxis("centrality", "select");
+//   SetAxis("rapidity", "projection");
+//   SetAxis("pT", "slice");
+//   std::string component_1 = "x1x1";
+//   std::string component_2 = "y1y1";
+//   std::string harmonic = "1";
   
-//   SetAxis("rapidity", "select");
-//   SetAxis("pT", "projection");
-//   SetAxis("centrality", "slice");
-//   std::string component_1 = "x2x2";
-//   std::string component_2 = "y2y2";
-//   std::string harmonic = "2";
+  SetAxis("rapidity", "select");
+  SetAxis("pT", "projection");
+  SetAxis("centrality", "slice");
+  std::string component_1 = "x2x2";
+  std::string component_2 = "y2y2";
+  std::string harmonic = "2";
     
   TFile* fileIn = TFile::Open(fileName_.c_str(), "open");
   auto* dc = (Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>>("sim/u_sim_PLAIN.Q_psi_PLAIN.x1x1");
@@ -49,12 +49,12 @@ void lambda(){
     }
   }
   
-  SetSelectAxisBinEdges({10, 40});  
-//   IntegrateSelectAxis();
+//   SetSelectAxisBinEdges({0, 70});  
+  IntegrateSelectAxis();
 
-  IntegrateSliceAxis();
-//   SetSliceAxisBinEdges({1, 1.4});
-//   SetSliceAxisBinEdges({20, 40});
+//   IntegrateSliceAxis();
+//   SetSliceAxisBinEdges({0, 0.8, 1.2, 1.6});
+  SetSliceAxisBinEdges({0, 10, 20, 40, 70});
 
 //   SetProjectionAxisBinEdges({0.1-axes.at(kProjection).shift_,
 //                              0.3-axes.at(kProjection).shift_,
@@ -74,7 +74,8 @@ void lambda(){
     v1_rec.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
     v1_rec.Scale(2);
     v1_rec.SetMarker(kFullSquare);
-    v1_rec.SetPalette( {kOrange+1, kSpring-4, kGreen+2, kAzure-4, kRed, kViolet, kBlue, kBlack, kMagenta } );
+//     v1_rec.SetPalette( {kRed, kGreen+2, kBlue, kViolet, kBlack } );
+    v1_rec.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
     v1_rec.Rebin({{axes.at(kSelect).reco_name_.c_str(),
                     {axes.at(kSelect).bin_edges_.at(iEdge), axes.at(kSelect).bin_edges_.at(iEdge+1)}}});
     v1_rec.SetProjectionAxis({axes.at(kProjection).reco_name_.c_str(), axes.at(kProjection).bin_edges_});
@@ -89,7 +90,8 @@ void lambda(){
     v1_sim.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
     v1_sim.Scale(2);
     v1_sim.SetMarker(-1);
-    v1_sim.SetPalette( {kOrange+1, kSpring-4, kGreen+2, kAzure-4, kRed, kViolet, kBlue, kBlack, kMagenta } );
+    v1_sim.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
+//     v1_sim.SetPalette( {kRed-2, kGreen-2, kBlue-2, kViolet-2, kBlack-2 } );
     v1_sim.Rebin({{axes.at(kSelect).sim_name_.c_str(),
                     {axes.at(kSelect).bin_edges_.at(iEdge), axes.at(kSelect).bin_edges_.at(iEdge+1)}}});
     v1_sim.SetProjectionAxis({axes.at(kProjection).sim_name_.c_str(), axes.at(kProjection).bin_edges_});
@@ -101,28 +103,31 @@ void lambda(){
     HeapPicture pic( (axes.at(kSelect).name_ + "_" + std::to_string(iEdge)).c_str(), {1000, 1000});
     
 //     pic.AddText({0.2, 0.90, "Au+Au, DCM-QGSM-SMM, 12A GeV/c"}, 0.025);
-    pic.AddText({0.2, 0.90, "Au+Au"}, 0.025);
-//     pic.AddText({0.2, 0.87, "DCM-QGSM-SMM"}, 0.025);
-    pic.AddText({0.2, 0.87, "UrQMD"}, 0.025);
-    pic.AddText({0.2, 0.84, "12A GeV/c"}, 0.025);
-//     pic.AddText({0.2, 0.84, "3.3A GeV/c"}, 0.025);
-    pic.AddText({0.2, 0.81, (to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) +
-                            " < " + axes.at(kSelect).title_ +
-                            " < " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge+1) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) +
-                            axes.at(kSelect).unit_).c_str()}, 0.025);
+    pic.AddText({0.2, 0.90, particle.c_str()}, 0.035);
+    pic.AddText({0.2, 0.87, "5M Au+Au"}, 0.025);
+    pic.AddText({0.2, 0.84, "DCM-QGSM-SMM"}, 0.025);
+//     pic.AddText({0.2, 0.84, "UrQMD"}, 0.025);
+    pic.AddText({0.2, 0.81, "12A GeV/c"}, 0.025);
+//     pic.AddText({0.2, 0.81, "3.3A GeV/c"}, 0.025);
+
+    pic.AddText({0.2, 0.78, (axes.at(kSelect).title_ + ": " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) + 
+                            " - " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge+1) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) + axes.at(kSelect).unit_).c_str()}, 0.025);
     
     auto leg1 = new TLegend();
     leg1->SetBorderSize(1);
+    leg1->SetHeader((axes.at(kSlice).title_+axes.at(kSlice).unit_).c_str());
     
     for( auto obj : v1_rec.GetProjections() ){
       pic.AddDrawable( obj );
       leg1->AddEntry( obj->GetPoints(), obj->GetTitle().c_str(), "P" );
     }
     for( auto obj : v1_sim.GetProjections() ){
+//       obj->SetErrorOption("E3");
       pic.AddDrawable( obj );
     }
 
-    pic.SetAxisTitles({(axes.at(kProjection).title_ + axes.at(kProjection).unit_).c_str(), ("v_{" + harmonic + "} {" + particle + "}").c_str()});
+    pic.SetAxisTitles({(axes.at(kProjection).title_ + axes.at(kProjection).unit_).c_str(), ("v_{" + harmonic + "}").c_str()});
+    
 
 //     pic.SetXRange({-0.05, 0.65});
     pic.CustomizeXRange();

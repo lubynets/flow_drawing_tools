@@ -20,7 +20,7 @@ std::vector<Axis> axes
   {"pT", "SimParticles_pT", "ReconstructedParticles_pT", "p_{T}", ", GeV/c", {}, 0., 1},
   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y_{CM}", "", {}, -1.6217901, 1},
 //   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y_{CM}", "", {}, -0.985344, 1},
-  {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "C", ", %", {}, 0., 0}
+  {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "centrality", ", %", {}, 0., 0}
 };
   
 void SetFileName(const std::string& filename){
