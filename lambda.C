@@ -96,7 +96,7 @@ void lambda(){
                     {axes.at(kSelect).bin_edges_.at(iEdge), axes.at(kSelect).bin_edges_.at(iEdge+1)}}});
     v1_sim.SetProjectionAxis({axes.at(kProjection).sim_name_.c_str(), axes.at(kProjection).bin_edges_});
     v1_sim.SetSliceAxis({axes.at(kSlice).sim_name_.c_str(), axes.at(kSlice).bin_edges_});
-    v1_rec.ShiftSliceAxis(axes.at(kSlice).shift_);
+    v1_sim.ShiftSliceAxis(axes.at(kSlice).shift_);
     v1_sim.Calculate();
     v1_sim.ShiftProjectionAxis(axes.at(kProjection).shift_);
 
