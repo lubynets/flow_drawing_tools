@@ -15,6 +15,8 @@
 #include <TLatex.h>
 #include <utility>
 
+class TLegendEntry;
+
 class Picture : public TObject {
 public:
   Picture() = default;
@@ -65,8 +67,23 @@ public:
   void SetLogY(bool is_log_y=true) { Picture::is_log_y = is_log_y; }
   void SetLogX(bool is_log_x=true) { Picture::is_log_x = is_log_x; }
   void SetLogZ(bool is_log_z=true) { Picture::is_log_z = is_log_z; }
+  
+  TCanvas* GetCanvas() { return canvas_; }
+  void CustomizeXRange(const float part=1.);
+  void CustomizeYRange(const float part=1.);
+  virtual void CustomizeLegend(TLegend* leg) {}
+  
+  void SetGridX() { canvas_->SetGridx(); }
+  void SetGridY() { canvas_->SetGridy(); }
+  
 
 protected:
+  
+  bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
+  std::vector<float> TransformToUser(TCanvas* c, std::vector<float> x) const;
+  bool OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const;
+  std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;  
+  
   std::string name_;
   std::array<int, 2> resolution_;
   TCanvas* canvas_;
@@ -84,6 +101,20 @@ protected:
   bool is_log_x{false};
   bool is_log_z{false};
   bool auto_legend_{true};
+  
+  float xmin_ =  999.;
+  float xmax_ = -999.;
+  float ymin_ =  999.;
+  float ymax_ = -999.;
+  
+  enum corners : short {
+    kX1 = 0,
+    kY1,
+    kX2,
+    kY2,
+    kNumberOfCorners    
+  };
+  
   ClassDefOverride(Picture, 1)
 };
 

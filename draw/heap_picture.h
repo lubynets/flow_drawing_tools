@@ -27,31 +27,11 @@ public:
   }
   void SetAxisTitles(const std::vector<std::string> &axis_titles) override;
   void Draw() override;
-  TCanvas* GetCanvas() { return canvas_; }
-  void CustomizeXRange(const float part=1.);
-  void CustomizeYRange(const float part=1.);
-  void CustomizeLegend(TLegend* leg);
+  void CustomizeLegend(TLegend* leg) override;
 
 protected:
   
-  bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
-  std::vector<float> TransformToUser(TCanvas* c, std::vector<float> x) const;
-  bool OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const;
-  std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;
-
   std::vector<DrawableObject*> drawable_objects_;
-  float xmin_ =  999.;
-  float xmax_ = -999.;
-  float ymin_ =  999.;
-  float ymax_ = -999.;
-  
-  enum corners : short {
-    kX1 = 0,
-    kY1,
-    kX2,
-    kY2,
-    kNumberOfCorners    
-  };
   
   ClassDefOverride(HeapPicture, 1)
 };
