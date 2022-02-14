@@ -10,38 +10,40 @@ void lambda(){
 //   auto leg1 = new TLegend( 0.65, 0.75, 0.9, 0.945 );
   bool is_first_canvas = true;
   
-//   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3122.set1.sgnl_1.root");
+  SetFileName("/home/user/cbmdir/working/qna/correlations/derivatives/v1.dcmqgsm.12agev.defcuts.3122.set2.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.3122.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.3.3agev.defcuts.3122.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.master.root");
-//   std::string particle = "#Lambda";
+  std::string particle = "#Lambda";
   
-  SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3312.set1.sgnl_1.root");
+//   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3312.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.3312.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.3.3agev.defcuts.3312.set1.sgnl_1.root");
-  std::string particle = "#Xi^{-}";
+//   std::string particle = "#Xi^{-}";
   
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.310.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.310.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.3.3agev.defcuts.310.set1.sgnl_1.root");
 //   std::string particle = "K^{0}_{S}";
   
-//   SetAxis("centrality", "select");
-//   SetAxis("rapidity", "projection");
-//   SetAxis("pT", "slice");
-//   std::string component_1 = "x1x1";
-//   std::string component_2 = "y1y1";
-//   std::string harmonic = "1";
+  SetAxis("centrality", "select");
+  SetAxis("rapidity", "projection");
+  SetAxis("pT", "slice");
+  std::string component_1 = "x1x1";
+  std::string component_2 = "y1y1";
+  std::string harmonic = "1";
   
-  SetAxis("rapidity", "select");
-  SetAxis("pT", "projection");
-  SetAxis("centrality", "slice");
-  std::string component_1 = "x2x2";
-  std::string component_2 = "y2y2";
-  std::string harmonic = "2";
+//   SetAxis("rapidity", "select");
+//   SetAxis("pT", "projection");
+//   SetAxis("centrality", "slice");
+//   std::string component_1 = "x2x2";
+//   std::string component_2 = "y2y2";
+//   std::string harmonic = "2";
     
   TFile* fileIn = TFile::Open(fileName_.c_str(), "open");
-  auto* dc = (Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>>("sim/u_sim_PLAIN.Q_psi_PLAIN.x1x1");
+//   auto* dc = (Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>>("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN.x1x1");
+  auto* dc = (Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>>("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN.x1x1");
+  assert(dc!=nullptr);
   for(auto& ax : axes) {
     Qn::Axis<double> qnaxis = dc->GetAxis(ax.sim_name_);
     for(int i=0; i<=qnaxis.size(); i++) {
@@ -50,11 +52,11 @@ void lambda(){
   }
   
 //   SetSelectAxisBinEdges({0, 70});  
-  IntegrateSelectAxis();
+//   IntegrateSelectAxis();
 
 //   IntegrateSliceAxis();
 //   SetSliceAxisBinEdges({0, 0.8, 1.2, 1.6});
-  SetSliceAxisBinEdges({0, 10, 20, 40, 70});
+//   SetSliceAxisBinEdges({0, 10, 20, 40, 70});
 
 //   SetProjectionAxisBinEdges({0.1-axes.at(kProjection).shift_,
 //                              0.3-axes.at(kProjection).shift_,
@@ -68,14 +70,15 @@ void lambda(){
   for(int iEdge=0; iEdge<axes.at(kSelect).bin_edges_.size()-1; iEdge++){
 
     auto v1_rec = DoubleDifferentialCorrelation( fileName_.c_str(),
-                                                {("rec/RESCALED/u_rec_RESCALED.Q_psi_PLAIN." + component_1).c_str(),
-                                                 ("rec/RESCALED/u_rec_RESCALED.Q_psi_PLAIN." + component_2).c_str() } );
+                                                {("v1/uPsi/v1.u_rec_RESCALED.Q_psi_PLAIN." + component_1).c_str(),
+                                                 ("v1/uPsi/v1.u_rec_RESCALED.Q_psi_PLAIN." + component_2).c_str() } );
     
     v1_rec.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
-    v1_rec.Scale(2);
+//     v1_rec.Scale(2);
     v1_rec.SetMarker(kFullSquare);
 //     v1_rec.SetPalette( {kRed, kGreen+2, kBlue, kViolet, kBlack } );
-    v1_rec.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
+//     v1_rec.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
+    v1_rec.SetPalette({kOrange+1, kSpring, kGreen+2, kAzure-4, kRed, kViolet, kBlue});
     v1_rec.Rebin({{axes.at(kSelect).reco_name_.c_str(),
                     {axes.at(kSelect).bin_edges_.at(iEdge), axes.at(kSelect).bin_edges_.at(iEdge+1)}}});
     v1_rec.SetProjectionAxis({axes.at(kProjection).reco_name_.c_str(), axes.at(kProjection).bin_edges_});
@@ -85,13 +88,14 @@ void lambda(){
     v1_rec.ShiftProjectionAxis(axes.at(kProjection).shift_);
     
     auto v1_sim = DoubleDifferentialCorrelation( fileName_.c_str(),
-                                                {("sim/u_sim_PLAIN.Q_psi_PLAIN." + component_1).c_str(),
-                                                 ("sim/u_sim_PLAIN.Q_psi_PLAIN." + component_2).c_str() } );
+                                                {("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN." + component_1).c_str(),
+                                                 ("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN." + component_2).c_str() } );
     v1_sim.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
-    v1_sim.Scale(2);
+//     v1_sim.Scale(2);
     v1_sim.SetMarker(-1);
-    v1_sim.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
+//     v1_sim.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
 //     v1_sim.SetPalette( {kRed-2, kGreen-2, kBlue-2, kViolet-2, kBlack-2 } );
+    v1_sim.SetPalette({kOrange+1, kSpring, kGreen+2, kAzure-4, kRed, kViolet, kBlue});
     v1_sim.Rebin({{axes.at(kSelect).sim_name_.c_str(),
                     {axes.at(kSelect).bin_edges_.at(iEdge), axes.at(kSelect).bin_edges_.at(iEdge+1)}}});
     v1_sim.SetProjectionAxis({axes.at(kProjection).sim_name_.c_str(), axes.at(kProjection).bin_edges_});
