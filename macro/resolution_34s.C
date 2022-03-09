@@ -57,14 +57,6 @@ void resolution_34s()
   pic.AddText({0.2, 0.77, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
 //   pic.AddText({0.2, 0.71, "REC: R^{A}_{x} = #sqrt{#frac{2#LTQ^{A}_{x}Q^{B}_{x}#GT#LTQ^{A}_{x}Q^{C}_{x}#GT}{#LTQ^{B}_{x}Q^{C}_{x}#GT}}"}, 0.02);
   
-//   pic.AddText({0.2, 0.93, "4 sub-event"}, 0.025);
-//   pic.AddText({0.2, 0.90, "Au+Au"}, 0.025);
-//   pic.AddText({0.2, 0.87, "DCM-QGSM-SMM"}, 0.025);
-// //   pic.AddText({0.2, 0.87, "UrQMD"}, 0.025);
-//   pic.AddText({0.2, 0.84, "12A GeV/c"}, 0.025);
-// //   pic.AddText({0.2, 0.84, "3.3A GeV/c"}, 0.025);
-//   
-//   pic.AddText({0.2, 0.78, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
   
   auto leg1 = new TLegend();
   leg1->SetBorderSize(1);

@@ -69,6 +69,7 @@ public:
   void SetLogZ(bool is_log_z=true) { Picture::is_log_z = is_log_z; }
   
   TCanvas* GetCanvas() { return canvas_; }
+  std::vector<TLegend*> GetLegends() { return legends_; }
   void CustomizeXRange(const float part=1.);
   void CustomizeYRange(const float part=1.);
   virtual void CustomizeLegend(TLegend* leg) {}

@@ -10,7 +10,8 @@ void lambda(){
 //   auto leg1 = new TLegend( 0.65, 0.75, 0.9, 0.945 );
   bool is_first_canvas = true;
   
-  SetFileName("/home/user/cbmdir/working/qna/correlations/derivatives/v1.dcmqgsm.12agev.defcuts.3122.set2.sgnl_1.root");
+//   SetFileName("/home/user/cbmdir/working/qna/correlations/derivatives/v1.dcmqgsm.12agev.defcuts.3122.set2.sgnl_1.root");
+  SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.12agev.defcuts.3122.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.urqmd.12agev.defcuts.3122.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.dcmqgsm.3.3agev.defcuts.3122.set1.sgnl_1.root");
 //   SetFileName("/home/user/cbmdir/working/qna/correlations/cl.master.root");
@@ -41,8 +42,8 @@ void lambda(){
 //   std::string harmonic = "2";
     
   TFile* fileIn = TFile::Open(fileName_.c_str(), "open");
-//   auto* dc = (Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>>("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN.x1x1");
-  auto* dc = (Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>>("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN.x1x1");
+  auto* dc = (Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCollect,Qn::Axis<double>>>("sim/u_sim_PLAIN.Q_psi_PLAIN.x1x1");
+//   auto* dc = (Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>>("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN.x1x1");
   assert(dc!=nullptr);
   for(auto& ax : axes) {
     Qn::Axis<double> qnaxis = dc->GetAxis(ax.sim_name_);
@@ -70,11 +71,14 @@ void lambda(){
   for(int iEdge=0; iEdge<axes.at(kSelect).bin_edges_.size()-1; iEdge++){
 
     auto v1_rec = DoubleDifferentialCorrelation( fileName_.c_str(),
-                                                {("v1/uPsi/v1.u_rec_RESCALED.Q_psi_PLAIN." + component_1).c_str(),
-                                                 ("v1/uPsi/v1.u_rec_RESCALED.Q_psi_PLAIN." + component_2).c_str() } );
+                                                {("rec/RESCALED/u_rec_RESCALED.Q_psi_PLAIN." + component_1).c_str(),
+                                                 ("rec/RESCALED/u_rec_RESCALED.Q_psi_PLAIN." + component_2).c_str() } );
+//     auto v1_rec = DoubleDifferentialCorrelation( fileName_.c_str(),
+//                                                 {("v1/uQ_R1_sub4_sts_pipos/v1.u_rec_RESCALED.psd1_RECENTERED.res_sub4_sts_pipos." + component_1).c_str(),
+//                                                  ("v1/uQ_R1_sub4_sts_pipos/v1.u_rec_RESCALED.psd1_RECENTERED.res_sub4_sts_pipos." + component_2).c_str() } );
     
     v1_rec.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
-//     v1_rec.Scale(2);
+    v1_rec.Scale(2);
     v1_rec.SetMarker(kFullSquare);
 //     v1_rec.SetPalette( {kRed, kGreen+2, kBlue, kViolet, kBlack } );
 //     v1_rec.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
@@ -86,12 +90,12 @@ void lambda(){
     v1_rec.ShiftSliceAxis(axes.at(kSlice).shift_);
     v1_rec.Calculate();
     v1_rec.ShiftProjectionAxis(axes.at(kProjection).shift_);
-    
+
     auto v1_sim = DoubleDifferentialCorrelation( fileName_.c_str(),
-                                                {("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN." + component_1).c_str(),
-                                                 ("v1/usimPsi/v1.u_sim_PLAIN.Q_psi_PLAIN." + component_2).c_str() } );
+                                                {("sim/u_sim_PLAIN.Q_psi_PLAIN." + component_1).c_str(),
+                                                 ("sim/u_sim_PLAIN.Q_psi_PLAIN." + component_2).c_str() } );
     v1_sim.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
-//     v1_sim.Scale(2);
+    v1_sim.Scale(2);
     v1_sim.SetMarker(-1);
 //     v1_sim.SetPalette( {kOrange+1, kGreen+2, kBlue, kRed, kViolet, kAzure-4, kBlack, kMagenta } );
 //     v1_sim.SetPalette( {kRed-2, kGreen-2, kBlue-2, kViolet-2, kBlack-2 } );
@@ -116,6 +120,7 @@ void lambda(){
 
     pic.AddText({0.2, 0.78, (axes.at(kSelect).title_ + ": " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) + 
                             " - " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge+1) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) + axes.at(kSelect).unit_).c_str()}, 0.025);
+//     pic.AddText({0.2, 0.75, "#Psi(PSD_{1})"}, 0.025);
     
     auto leg1 = new TLegend();
     leg1->SetBorderSize(1);
