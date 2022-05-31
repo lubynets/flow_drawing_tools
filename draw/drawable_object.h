@@ -24,6 +24,7 @@ public:
   ~DrawableObject() override = default;
 
   int GetColor() const { return color_; }
+  int GetMarker() const { return marker_; }
   void Fit( TF1* function ){
     this->RefreshPoints();
     points_->Fit(function);

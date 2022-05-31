@@ -4,14 +4,14 @@ void resolution_34s()
   
   bool is_first_canvas = true;
   
-  std::string evegen = "dcmqgsm";
-//   std::string evegen = "urqmd";
+//   std::string evegen = "dcmqgsm";
+// //   std::string evegen = "urqmd";
+//   
+//   std::string pbeam = "12";
+// //   std::string pbeam = "3.3";
   
-  std::string pbeam = "12";
-//   std::string pbeam = "3.3";
-  
-  std::string fileNameMc = "/home/user/cbmdir/working/qna/correlations/derivatives/v1.dcmqgsm.12agev.defcuts.3122.set2.sgnl_1.root";
-  std::string fileNameReco = "/home/user/cbmdir/working/qna/correlations/derivatives/v1.dcmqgsm.12agev.defcuts.3122.set2.sgnl_1.root";
+  std::string fileNameMc = "/home/user/cbmdir/working/qna/correlations/aXmass/cplx.dcmqgsm.apr20.recpid.lightcuts1.3122.set4.all.root";
+  std::string fileNameReco = "/home/user/cbmdir/working/qna/correlations/aXmass/cplx.dcmqgsm.apr20.recpid.lightcuts1.3122.set4.all.root";
     
 //   std::vector<std::string> steps{"PLAIN", "RECENTERED", "TWIST", "RESCALED"};
   std::vector<std::string> correls{"psd1", "psd2", "psd3"};
@@ -35,10 +35,10 @@ void resolution_34s()
     {
       multicor_mc.AddCorrelation(fileNameMc, {"R1/MC/res_MC." + corr + "_RECENTERED." + comp}, "mc_" + corr + "_" + comp);
       
-//       multicor_rec.AddCorrelation(fileNameReco, {"R1/3S/res_3S." + corr + "_RECENTERED." + comp}, "rec_" + corr + "_" + comp);
+//       multicor_rec.AddCorrelation(fileNameReco, {"R1/sub3/res_sub3." + corr + "_RECENTERED." + comp}, "rec_" + corr + "_" + comp);
       
-//       multicor_rec.AddCorrelation(fileNameReco, {"R1/4S_sts_p/res_4S_sts_p." + corr + "_RECENTERED." + comp}, "rec_" + corr + "_" + comp);
-      multicor_rec.AddCorrelation(fileNameReco, {"R1/4S_sts_pipos/res_4S_sts_pipos." + corr + "_RECENTERED." + comp}, "rec_" + corr + "_" + comp);
+//       multicor_rec.AddCorrelation(fileNameReco, {"R1/sub4_sts_p/res_sub4_sts_p." + corr + "_RECENTERED." + comp}, "rec_" + corr + "_" + comp);
+      multicor_rec.AddCorrelation(fileNameReco, {"R1/sub4_sts_pipos/res_sub4_sts_pipos." + corr + "_RECENTERED." + comp}, "rec_" + corr + "_" + comp);
     }
         
 //   multicor_mc.Scale(2);
@@ -54,7 +54,7 @@ void resolution_34s()
   pic.AddText({0.2, 0.83, "12A GeV/c"}, 0.025);
 //   pic.AddText({0.2, 0.81, "3.3A GeV/c"}, 0.025);
   
-  pic.AddText({0.2, 0.77, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
+//   pic.AddText({0.2, 0.77, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
 //   pic.AddText({0.2, 0.71, "REC: R^{A}_{x} = #sqrt{#frac{2#LTQ^{A}_{x}Q^{B}_{x}#GT#LTQ^{A}_{x}Q^{C}_{x}#GT}{#LTQ^{B}_{x}Q^{C}_{x}#GT}}"}, 0.02);
   
   

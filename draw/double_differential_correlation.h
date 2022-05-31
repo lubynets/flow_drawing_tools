@@ -19,14 +19,19 @@ public:
   DoubleDifferentialCorrelation(const std::string &file_name,
                                 const std::vector<std::string> &objects)
       : ReadableObject(file_name, objects) {
-    std::vector<Qn::DataContainerStatCalculate> containers;
+    std::vector<Qn::DataContainerStatDiscriminator> containers;
     for( const auto& name : objects ){
       try {
         containers.emplace_back(
-            *(this->ReadObjectFromFile<Qn::DataContainerStatCalculate>(name)));
+            *(this->ReadObjectFromFile<Qn::DataContainerStatDiscriminator>(name)));
       } catch (std::exception&) {
+        try {
         containers.emplace_back(
+            *(this->ReadObjectFromFile<Qn::DataContainerStatCalculate>(name)));
+        } catch (std::exception&) {
+          containers.emplace_back(
             *(this->ReadObjectFromFile<Qn::DataContainerStatCollect>(name)));
+        }
       }
     }
     correlation_ = containers.front();
@@ -35,7 +40,7 @@ public:
     correlation_ = correlation_/ (double)containers.size();
   }
   ~DoubleDifferentialCorrelation() override = default;
-  Qn::DataContainerStatCalculate &GetCorrelation() {
+  Qn::DataContainerStatDiscriminator &GetCorrelation() {
     return correlation_;
   }
   void Scale( double scale ){ correlation_ = correlation_*scale; }
@@ -73,7 +78,7 @@ public:
   void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
 protected:
   void FillGraphs();
-  Qn::DataContainerStatCalculate correlation_;
+  Qn::DataContainerStatDiscriminator correlation_;
   Qn::AxisD projection_axis_;
   Qn::AxisD slice_axis_;
   float slice_axis_shift_{0};

@@ -52,6 +52,8 @@ set(SOURCES
         draw/double_differential_correlation.cpp
         draw/double_differential_histogram.cpp
         draw/multi_correlation.cpp
+        draw/graph_subtractor.cpp
+#         draw/dd_correlation_difference.cpp
         )
 set(HEADERS
         draw/readable_object.h
@@ -68,6 +70,8 @@ set(HEADERS
         draw/double_differential_correlation.h
         draw/double_differential_histogram.h
         draw/multi_correlation.h
+        draw/graph_subtractor.h
+#         draw/dd_correlation_difference.h
         )
 
 set(PCM_FILE_NAME libDraw)
