@@ -54,3 +54,12 @@ Histogram1D operator/( const Histogram1D& num, const Histogram1D& den){
   result.histogram_ = res_histo;
   return result;
 }
+
+void Histogram1D::ShiftXaxis( const float value ){
+  const int Nbins = histogram_->GetXaxis()->GetNbins();
+  double* x = new double[Nbins+1];
+  for(int i=0; i<=Nbins; i++){
+    x[i] = histogram_->GetXaxis()->GetBinUpEdge(i) + value;
+  }
+  histogram_->SetBins(Nbins, x);
+}

@@ -18,6 +18,7 @@ public:
   void RefreshPoints() override;
   TH1 *GetHistogram() const { return histogram_; }
   void SetHistogram(TH1 *histogram) { histogram_ = histogram; }
+  void ShiftXaxis( const float value );
   friend Histogram1D operator/( const Histogram1D& num, const Histogram1D& den);
 
 protected:
