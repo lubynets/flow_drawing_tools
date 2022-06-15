@@ -9,7 +9,7 @@ Correlation::Correlation(const std::string &file_name,
                          const std::vector<std::string> &objects,
                          const std::string &title)
     : DrawableObject(file_name, objects, title) {
-  std::vector<Qn::DataContainerStatCalculate> containers;
+  std::vector<Qn::DataContainerStatDiscriminator> containers;
   for( const auto& name : objects ){
     try {
       containers.emplace_back(
@@ -56,7 +56,7 @@ void Correlation::RefreshPoints() {
   if( fit_ )
     points_->Fit(fit_);
   if( calculate_systematics_from_variation_ ){
-    std::vector<Qn::DataContainerStatCalculate> variations;
+    std::vector<Qn::DataContainerStatDiscriminator> variations;
     for( const auto& combination : combinations_ ){
       variations.emplace_back( average_ - combination );
     }

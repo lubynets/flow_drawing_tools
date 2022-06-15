@@ -20,7 +20,7 @@ public:
               const std::string &title);
   ~Correlation() override;
   void RefreshPoints() override;
-  Qn::DataContainerStatCalculate &GetCorrelation() {
+  Qn::DataContainerStatDiscriminator &GetCorrelation() {
     return average_;
   }
   void Rebin( const std::vector<Qn::AxisD>& axes){
@@ -55,8 +55,8 @@ public:
   }
 
 protected:
-  Qn::DataContainerStatCalculate average_;
-  std::vector<Qn::DataContainerStatCalculate> combinations_;
+  Qn::DataContainerStatDiscriminator average_;
+  std::vector<Qn::DataContainerStatDiscriminator> combinations_;
   bool calculate_systematics_from_variation_;
   ClassDefOverride(Correlation, 1)
 };
