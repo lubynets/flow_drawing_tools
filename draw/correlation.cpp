@@ -13,10 +13,15 @@ Correlation::Correlation(const std::string &file_name,
   for( const auto& name : objects ){
     try {
       containers.emplace_back(
-          *(this->ReadObjectFromFile<Qn::DataContainerStatCalculate>(name)));
+          *(this->ReadObjectFromFile<Qn::DataContainerStatDiscriminator>(name)));
     } catch (std::exception&) {
+      try {
       containers.emplace_back(
+          *(this->ReadObjectFromFile<Qn::DataContainerStatCalculate>(name)));
+      } catch (std::exception&) {
+        containers.emplace_back(
           *(this->ReadObjectFromFile<Qn::DataContainerStatCollect>(name)));
+      }
     }
   }
   average_ = containers.front();
