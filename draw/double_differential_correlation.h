@@ -66,6 +66,7 @@ public:
   void SetSliceAxis(const Qn::AxisD &slice_axis) { slice_axis_ = slice_axis; }
   void SetMarker(int marker) { marker_ = marker; }
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
+  void SetBiasPalette(bool value=true) { bias_palette_ = value; }
   void Calculate();
   void SaveToFile( const std::string& file_name );
   void SetErrorOption(const std::string &error_option);
@@ -101,6 +102,7 @@ protected:
       kOrange-3,
       kRed,
   };
+  bool bias_palette_{true};
 
 };
 

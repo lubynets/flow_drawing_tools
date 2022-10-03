@@ -29,7 +29,7 @@ void DoubleDifferentialCorrelation::Calculate() {
 }
 void DoubleDifferentialCorrelation::FillGraphs() {
   std::vector<int> colors;
-  if( projection_points_.size() < palette_.size() ){
+  if( projection_points_.size() < palette_.size() && bias_palette_ ){
     auto bias = palette_.size() / projection_points_.size();
     for( size_t i=0; i<projection_points_.size(); ++i )
       colors.push_back(palette_.at(i*bias));
