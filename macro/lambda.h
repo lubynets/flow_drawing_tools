@@ -16,13 +16,21 @@ struct Axis
   int precision_;
 };
 
-std::vector<Axis> axes
+std::vector<Axis> axes // 3122, 310
 {
   {"pT", "SimParticles_pT", "ReconstructedParticles_pT", "pT", "p_{T}", ", GeV/c", {}, 0., 1},
-  {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{CM}", "", {}, -1.6217901, 1},
-//   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{CM}", "", {}, -0.985344, 1},
+//   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{LAB}", "", {}, 0, 1},
+  {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{CM}", "", {}, -1.62179, 1},
   {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "centrality", "centrality", ", %", {}, 0., 0}
 };
+  
+// std::vector<Axis> axes  // 3312
+// {
+//   {"pT", "SimParticles_pT", "ReconstructedParticles_pT", "ReconstructedParticles_pT", "p_{T}", ", GeV/c", {}, 0., 1},
+//   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "ReconstructedParticles_rapidity", "y_{LAB}", "", {}, -1.62179, 1},
+// //   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{CM}", "", {}, -0.985344, 1},
+//   {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "centrality", ", %", {}, 0., 0}
+// };
   
 void SetFileName(const std::string& filename){
   fileName_ = filename;
