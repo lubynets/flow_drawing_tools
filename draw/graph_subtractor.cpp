@@ -25,8 +25,10 @@ void GraphSubtractor::Calculate() {
       err_sub = 0;
     else
       err_sub = gr_sub->GetErrorY(ip);
-    
-    const float err_diff = std::sqrt(err_min*err_min + err_sub*err_sub);
+
+    const float err_diff = std::sqrt(err_min*err_min - err_sub*err_sub);
+    if(err_min < err_sub)
+      std::cout << "problems...\n";
     
     if(!is_divide_over_error_) {
       gr_res->SetPoint(ip, x, diff);
