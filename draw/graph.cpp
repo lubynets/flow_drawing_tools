@@ -66,6 +66,17 @@ void Graph::ShiftXaxis( const float value ){
   }
 }
 
+// void Graph::SlightShiftX( float value ) {
+//   const int npoints = points_->GetN();
+//   const float range = points_->GetPointX(npoints-1) - points_->GetPointX(0);
+//   const float elementary_shift = range*value;
+//   for(int i=0; i<npoints; i++) {
+//     const float shift = (-1.*npoints/2 + 0.5 + i)*elementary_shift;
+//     auto x = points_->GetPointX(i);
+//     points_->SetPointX(i, x+shift);
+//   }
+// }
+
 Graph::Graph(const std::string &file_name,
              const std::vector<std::string> &objects, const std::string &title)
     : DrawableObject(file_name, objects, title) {

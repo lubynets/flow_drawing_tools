@@ -79,5 +79,13 @@ void DoubleDifferentialCorrelation::RecalculateProjectionAxis( const std::vector
 
 void DoubleDifferentialCorrelation::ShiftProjectionAxis( const float value ){
   for(auto& p : projections_)
-    p->ShiftXaxis(value);  
+    p->ShiftXaxis(value);
+}
+
+void DoubleDifferentialCorrelation::SlightShiftProjectionAxis( float value ) {
+  const int nprojections = projections_.size();
+  for(int i=0; i<nprojections; i++) {
+    const float shift = (-1.*nprojections/2 + 0.5 + i)*value;
+    projections_.at(i)->ShiftXaxis(shift);
+  }
 }
