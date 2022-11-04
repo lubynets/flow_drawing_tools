@@ -8,7 +8,7 @@ set(CMAKE_BUILD_TYPE debug)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
-find_package( Boost REQUIRED COMPONENTS program_options regex )
+find_package( Boost REQUIRED COMPONENTS program_options )
 find_package(ROOT REQUIRED)
 
 if (NOT ROOT_FOUND)
