@@ -103,10 +103,10 @@ protected:
   bool is_log_z{false};
   bool auto_legend_{true};
   
-  float xmin_ =  999.;
-  float xmax_ = -999.;
-  float ymin_ =  999.;
-  float ymax_ = -999.;
+  float xmin_ =  std::numeric_limits<float>::max();
+  float xmax_ = -std::numeric_limits<float>::max();
+  float ymin_ =  std::numeric_limits<float>::max();
+  float ymax_ = -std::numeric_limits<float>::max();
   
   enum corners : short {
     kX1 = 0,
