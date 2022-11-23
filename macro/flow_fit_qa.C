@@ -1,48 +1,30 @@
 #include "shape_fit_qa.h"
 
-void shape_fit_qa() {
+void flow_fit_qa() {
   gROOT->Macro( "/home/oleksii/cbmdir/flow_drawing_tools/example/style.cc" );
 
-//   std::string particle = "#Lambda"; std::string pdg = "3122";
-  std::string particle = "K^{0}_{S}"; std::string pdg = "310";
+  std::string fileName = "/home/oleksii/cbmdir/working/qna/correlations/aXmass/out.fitter.dcmqgsm.apr20.recpid.lightcuts1.3122.root";
+  std::string particle = "#Lambda";
 
-  std::string fileName = "/home/oleksii/cbmdir/working/qna/shapes/shape_fit.dcmqgsm.12agev.recpid." + pdg + ".root";
   std::vector<std::pair<std::string, std::string>> values {
-    {"Params/sgnl", "Height"},
-    {"Params/sgnl", "mu_shift"},
-    {"Params/sgnl", "sigma"},
-    {"Params/sgnl", "a1"},
-    {"Params/sgnl", "lgn1"},
-    {"Params/sgnl", "a2"},
-    {"Params/sgnl", "lgn2"},
-    {"Params/bckgr", "p0"},
-    {"Params/bckgr", "p1"},
-    {"Params/bckgr", "p2"},
-    {"Params/bckgr", "p3"},
-    {"Chi2s", "chi2_prefit"},
-    {"Chi2s", "chi2_fit"}
+    {"Params", "signal.x1x1"},
+    {"Params", "signal.y1y1"},
+    {"Params", "bckgr_0.x1x1"},
+    {"Params", "bckgr_0.y1y1"},
+    {"Params", "bckgr_1.x1x1"},
+    {"Params", "bckgr_1.y1y1"},
+    {"Chi2s", "fit_chi2ndf.x1x1"},
+    {"Chi2s", "fit_chi2ndf.y1y1"},
+    {"Entries", "entries_sgnl"},
+    {"Entries", "entries_bckgr"}
   };
-
-//   std::string fileName = "/home/oleksii/cbmdir/working/qna/correlations/aXmass/out.fitter.dcmqgsm.apr20.recpid.lightcuts1." + pdg + ".root";
-//   std::vector<std::pair<std::string, std::string>> values {
-//     {"Params", "signal.x1x1"},
-//     {"Params", "signal.y1y1"},
-//     {"Params", "bckgr_0.x1x1"},
-//     {"Params", "bckgr_0.y1y1"},
-//     {"Params", "bckgr_1.x1x1"},
-//     {"Params", "bckgr_1.y1y1"},
-//     {"Chi2s", "fit_chi2ndf.x1x1"},
-//     {"Chi2s", "fit_chi2ndf.y1y1"},
-//     {"Entries", "entries_sgnl"},
-//     {"Entries", "entries_bckgr"}
-//   };
 
   SetAxis("centrality", "select");
   SetAxis("y", "projection");
   SetAxis("pT", "slice");
 
   TFile* fileIn = TFile::Open(fileName.c_str(), "open");
-  auto* dc = (Qn::DataContainer<Qn::StatDiscriminator,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatDiscriminator,Qn::Axis<double>>>("Params/sgnl/Height");
+  auto* dc = (Qn::DataContainer<Qn::StatDiscriminator,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatDiscriminator,Qn::Axis<double>>>("Params/signal.x1x1");
   if(dc==nullptr){
     throw std::runtime_error("Data container is nullptr");
   }

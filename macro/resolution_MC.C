@@ -3,24 +3,29 @@ void resolution_MC() {
     
   std::string fileName = "/home/oleksii/cbmdir/working/qna/simtracksflow/v1andR1.stf.root";
     
-  std::vector<std::string> correls{"psd1_RECENTERED", "psd2_RECENTERED", "psd3_RECENTERED", "Q_spec_PLAIN"};
-  std::vector<std::string> components{"x1x1", "y1y1"};
-    
+  std::vector<std::string> correls{"psd1_RECENTERED", "psd2_RECENTERED", "psd3_RECENTERED"};
+//   std::vector<std::string> correls{"spec1_prim_PLAIN", "spec2_prim_PLAIN", "spec3_prim_PLAIN"};
+//   std::vector<std::string> correls{"spec1_all_PLAIN", "spec2_all_PLAIN", "spec3_all_PLAIN"};
+
+//   std::vector<std::string> components{"x1x1", "y1y1"};
+  std::vector<std::string> components{"x1y1", "y1x1"};
+
   MultiCorrelation multicor_mc;
   multicor_mc.SetPalette( {kBlue, kBlue, kRed, kRed, kGreen+2, kGreen+2, kBlack, kBlack} );
-  multicor_mc.SetMarkers( {-1, -2, -1, -2, -1, -2, -1, -2} );
-  
+//   multicor_mc.SetMarkers( {-1, -2, -1, -2, -1, -2} ); std::string L_or_P = "L"; std::string same_or_cross = "res";
+  multicor_mc.SetMarkers( {kFullSquare, kOpenSquare, kFullSquare, kOpenSquare, kFullSquare, kOpenSquare} ); std::string L_or_P = "P"; std::string same_or_cross = "res_cross";
+
   for(auto& corr : correls) {
     for(auto& comp : components) {
-      multicor_mc.AddCorrelation(fileName, {"R1/res." + corr + "." + comp}, "mc_" + corr + "_" + comp);
+      multicor_mc.AddCorrelation(fileName, {"R1/" + same_or_cross + "." + corr + "." + comp}, "mc_" + corr + "_" + comp);
     }
   }
             
   HeapPicture pic("picture", {1000, 1000});
-  pic.AddText({0.2, 0.89, "Au+Au"}, 0.025);
-  pic.AddText({0.2, 0.86, "DCM-QGSM-SMM"}, 0.025);
-  pic.AddText({0.2, 0.83, "12A GeV/c"}, 0.025);
-  pic.AddText({0.2, 0.77, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
+  pic.AddText({0.18, 0.92, "Au+Au"}, 0.025);
+  pic.AddText({0.18, 0.89, "DCM-QGSM-SMM"}, 0.025);
+  pic.AddText({0.18, 0.86, "12A GeV/c"}, 0.025);
+  pic.AddText({0.18, 0.83, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
   
   auto leg1 = new TLegend();
   leg1->SetBorderSize(1);
@@ -41,12 +46,11 @@ void resolution_MC() {
   gry->SetMarkerColor(kBlack);
   gry->SetLineColor(kBlack);
   
-  leg1->AddEntry(grx, "  X", "L");
-  leg1->AddEntry(gry, "  Y", "L");
-  leg1->AddEntry(multicor_mc.GetCorrelations().at(0)->GetPoints(), "  PSD1           ", "L");
-  leg1->AddEntry(multicor_mc.GetCorrelations().at(2)->GetPoints(), "  PSD2           ", "L");
-  leg1->AddEntry(multicor_mc.GetCorrelations().at(4)->GetPoints(), "  PSD3           ", "L");
-  leg1->AddEntry(multicor_mc.GetCorrelations().at(6)->GetPoints(), "  spec           ", "L");
+  leg1->AddEntry(grx, components.at(0).c_str(), L_or_P.c_str());
+  leg1->AddEntry(gry, components.at(1).c_str(), L_or_P.c_str());
+  leg1->AddEntry(multicor_mc.GetCorrelations().at(0)->GetPoints(), correls.at(0).c_str(), L_or_P.c_str());
+  leg1->AddEntry(multicor_mc.GetCorrelations().at(2)->GetPoints(), correls.at(1).c_str(), L_or_P.c_str());
+  leg1->AddEntry(multicor_mc.GetCorrelations().at(4)->GetPoints(), correls.at(2).c_str(), L_or_P.c_str());
   
   pic.SetAxisTitles( {"b, fm", "R_{1}"} );
   pic.CustomizeXRange();
@@ -61,7 +65,7 @@ void resolution_MC() {
   TFile* fileOut = TFile::Open("fileOut.root", "recreate");
   fileOut->cd();
   pic.GetCanvas()->Write();
-  fileOut->Close();  
+  fileOut->Close();
     
   pic.GetCanvas()->Print("fileOut.pdf", "pdf");
 }
