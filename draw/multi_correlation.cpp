@@ -65,3 +65,15 @@ void MultiCorrelation::AddCorrelation(const std::string& file,
                                       const std::string& title) {
   correlations_.push_back( new Correlation( file, objects, title ) );
 }
+
+void MultiCorrelation::SlightShiftXAxis( float value ) {
+  const int ncorrelations = correlations_.size();
+  for(int i=0; i<ncorrelations; i++) {
+    const float shift = (-1.*ncorrelations/2 + 0.5 + i)*value;
+    for(int j=0; j<correlations_.at(i)->GetPoints()->GetN(); j++){
+      auto x = correlations_.at(i)->GetPoints()->GetPointX(j);
+      correlations_.at(i)->GetPoints()->SetPointX(j, x+shift);
+      correlations_.at(i)->GetSysErrorPoints()->SetPointX(j, x+shift);
+    }
+  }
+}

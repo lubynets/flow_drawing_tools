@@ -47,7 +47,9 @@ Correlation operator/( const Correlation& num, const Correlation& den){
 
 void Correlation::RefreshPoints() {
   average_.SetErrors(Qn::StatCalculate::ErrorType::BOOTSTRAP);
-  points_ = Qn::ToTGraph(average_);
+  if(points_ == nullptr) {
+    points_ = Qn::ToTGraph(average_);
+  }
   for( int i=0; i<points_->GetN(); ++i ){
     auto y_err = points_->GetErrorY(i);
     if( isnan( y_err ) )
@@ -60,7 +62,9 @@ void Correlation::RefreshPoints() {
     for( const auto& combination : combinations_ ){
       variations.emplace_back( average_ - combination );
     }
-    sys_error_points_ = Qn::ToTGraph( average_ );
+    if(sys_error_points_ == nullptr) {
+      sys_error_points_ = Qn::ToTGraph( average_ );
+    }
     for( int i=0; i<sys_error_points_->GetN(); ++i ){
       auto x_hi = average_.GetAxes().front().GetUpperBinEdge(i);
       auto x_lo = average_.GetAxes().front().GetLowerBinEdge(i);

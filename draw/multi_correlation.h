@@ -33,6 +33,8 @@ public:
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
   void SetErrorOption(const std::string &error_option);
 
+  void SlightShiftXAxis( float value );
+
 protected:
   void ApplyStyle();
   std::vector<Correlation*> correlations_;
