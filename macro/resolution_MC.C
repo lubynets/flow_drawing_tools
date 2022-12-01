@@ -1,29 +1,46 @@
 void resolution_MC() {
   gROOT->Macro( "/home/oleksii/cbmdir/flow_drawing_tools/example/style.cc" );
-    
-  std::string fileName = "/home/oleksii/cbmdir/working/qna/simtracksflow/v1andR1.stf.root";
-    
-  std::vector<std::string> correls{"psd1_RECENTERED", "psd2_RECENTERED", "psd3_RECENTERED"};
-//   std::vector<std::string> correls{"spec1_prim_PLAIN", "spec2_prim_PLAIN", "spec3_prim_PLAIN"};
-//   std::vector<std::string> correls{"spec1_all_PLAIN", "spec2_all_PLAIN", "spec3_all_PLAIN"};
 
-//   std::vector<std::string> components{"x1x1", "y1y1"};
-  std::vector<std::string> components{"x1y1", "y1x1"};
+//   std::string evegen = "dcmqgsm";
+  std::string evegen = "urqmd";
+    
+  std::string fileName = "/home/oleksii/cbmdir/working/qna/simtracksflow/" + evegen + "/v1andR1.stf." + evegen + ".root";
+    
+//   std::vector<std::string> correls{"psd1_RECENTERED", "psd2_RECENTERED", "psd3_RECENTERED"};
+  std::vector<std::string> correls{"spec1_prim_PLAIN", "spec2_prim_PLAIN", "spec3_prim_PLAIN"};
+
+//   std::vector<std::string> components{"x1x1", "y1y1"}; std::string L_or_P = "L"; std::string same_or_cross = "res";
+  std::vector<std::string> components{"x1y1", "y1x1"}; std::string L_or_P = "P"; std::string same_or_cross = "res_cross";
+
+  std::string fileOutName;
+  if(correls.at(0)[0] == 'p' && components.at(0) == "x1x1") fileOutName = "res.psd";
+  if(correls.at(0)[0] == 'p' && components.at(0) == "x1y1") fileOutName = "res_cross.psd";
+  if(correls.at(0)[0] == 's' && components.at(0) == "x1x1") fileOutName = "res.spec_prim";
+  if(correls.at(0)[0] == 's' && components.at(0) == "x1y1") fileOutName = "res_cross.spec_prim";
 
   MultiCorrelation multicor_mc;
-  multicor_mc.SetPalette( {kBlue, kBlue, kRed, kRed, kGreen+2, kGreen+2, kBlack, kBlack} );
-//   multicor_mc.SetMarkers( {-1, -2, -1, -2, -1, -2} ); std::string L_or_P = "L"; std::string same_or_cross = "res";
-  multicor_mc.SetMarkers( {kFullSquare, kOpenSquare, kFullSquare, kOpenSquare, kFullSquare, kOpenSquare} ); std::string L_or_P = "P"; std::string same_or_cross = "res_cross";
+  multicor_mc.SetPalette( {kBlue, kBlue, kRed, kRed, kGreen+2, kGreen+2} );
+  if(components.at(0) == "x1x1") multicor_mc.SetMarkers( {-1, -2, -1, -2, -1, -2} );
+  if(components.at(0) == "x1y1") multicor_mc.SetMarkers( {kFullSquare, kOpenSquare, kFullSquare, kOpenSquare, kFullSquare, kOpenSquare} );
 
   for(auto& corr : correls) {
     for(auto& comp : components) {
       multicor_mc.AddCorrelation(fileName, {"R1/" + same_or_cross + "." + corr + "." + comp}, "mc_" + corr + "_" + comp);
     }
   }
+
+  multicor_mc.SlightShiftXAxis(0.);
+  if(components.at(0) == "x1y1") multicor_mc.SlightShiftXAxis(0.1);
             
   HeapPicture pic("picture", {1000, 1000});
-  pic.AddText({0.18, 0.92, "Au+Au"}, 0.025);
-  pic.AddText({0.18, 0.89, "DCM-QGSM-SMM"}, 0.025);
+  if(evegen == "dcmqgsm") {
+    pic.AddText({0.18, 0.92, "5M Au+Au"}, 0.025);
+    pic.AddText({0.18, 0.89, "DCM-QGSM-SMM"}, 0.025);
+  }
+  if(evegen == "urqmd") {
+    pic.AddText({0.18, 0.92, "2M Au+Au"}, 0.025);
+    pic.AddText({0.18, 0.89, "UrQMD"}, 0.025);
+  }
   pic.AddText({0.18, 0.86, "12A GeV/c"}, 0.025);
   pic.AddText({0.18, 0.83, "MC: R^{A}_{x} = 2#LTQ^{A}_{x}Q^{#Psi}_{x}#GT"}, 0.02);
   
@@ -62,10 +79,10 @@ void resolution_MC() {
   pic.Draw();
 //   pic.Save("fileOut", "png");
   
-  TFile* fileOut = TFile::Open("fileOut.root", "recreate");
-  fileOut->cd();
-  pic.GetCanvas()->Write();
-  fileOut->Close();
+//   TFile* fileOut = TFile::Open("fileOut.root", "recreate");
+//   fileOut->cd();
+//   pic.GetCanvas()->Write();
+//   fileOut->Close();
     
-  pic.GetCanvas()->Print("fileOut.pdf", "pdf");
+  pic.GetCanvas()->Print((fileOutName + ".pdf").c_str(), "pdf");
 }

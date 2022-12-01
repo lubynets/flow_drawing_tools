@@ -21,14 +21,14 @@ float C_via_b(float b) {
   return -1;
 }
 
-void lambda_stf() {
+void lambda_odd_stf() {
   gROOT->Macro( "/home/oleksii/cbmdir/flow_drawing_tools/example/style.cc" );
 
 //   std::string evegen = "dcmqgsm";
   std::string evegen = "urqmd";
 
   std::string fileName = "/home/oleksii/cbmdir/working/qna/simtracksflow/" + evegen + "/v1andR1.stf." + evegen + ".root";
-  
+
   std::vector<std::string> particles{"lambda", "kshort", "pipos", "pineg"};
   std::vector<std::string> subevents{"psd1", "psd2", "psd3", "spec1_prim", "spec2_prim", "spec3_prim"};
   std::string step;
@@ -37,18 +37,15 @@ void lambda_stf() {
   SetAxis("rapidity", "projection");
   SetAxis("pT", "slice");
 
-  std::string uQ_R1 = "uQ_R1"; std::string y_axis_title = "v_{1}";
-//   std::string uQ_R1 = "uQ_R1_even"; std::string y_axis_title = "v_{1}^{even}";
-
   std::vector<std::string> components{"x1x1", "y1y1"};
-  
+
   axes.at(0).sim_name_ = "SimParticles_pT";
   axes.at(1).sim_name_ = "SimParticles_rapidity";
   axes.at(2).sim_name_ = "SimEventHeader_b";
   axes.at(0).reco_name_ = "SimParticles_pT";
   axes.at(1).reco_name_ = "SimParticles_rapidity";
   axes.at(2).reco_name_ = "SimEventHeader_b";
-  
+
   TFile* fileIn = TFile::Open(fileName.c_str(), "open");
   auto* dc = (Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>>("v1/lambda/uPsi/v1.uPsi.x1x1");
   assert(dc!=nullptr);
@@ -58,7 +55,7 @@ void lambda_stf() {
       ax.bin_edges_.push_back(qnaxis.GetLowerBinEdge(i));
     }
   }
-  
+
 //   SetProjectionAxisBinEdges({-1.0-axes.at(kProjection).shift_,
 //                              -0.6-axes.at(kProjection).shift_,
 //                              -0.2-axes.at(kProjection).shift_,
@@ -84,16 +81,14 @@ void lambda_stf() {
       if(subevent[0] == 's') step = "_PLAIN";
 
       bool is_first_canvas = true;
-      std::string fileOutName;
-      if(uQ_R1 == "uQ_R1") fileOutName = "v1_res." + particle + "." + subevent;
-      if(uQ_R1 == "uQ_R1_even") fileOutName = "v1_res_even." + particle + "." + subevent;
+      std::string fileOutName = "v1_res_odd." + particle + "." + subevent;
       //       TFile* fileOut = TFile::Open("fileOut.root", "recreate");
 
       for(int iEdge=0; iEdge<axes.at(kSelect).bin_edges_.size()-1; iEdge++){
         for(auto comp : components) {
 
           auto v1_R_MC = DoubleDifferentialCorrelation( fileName.c_str(),
-                                                      {("v1/" + particle + "/uQ_R1/v1." + uQ_R1 + "." + subevent + step + "." + comp).c_str()} );
+                                                      {("v1/" + particle + "/uQ_R1/v1.uQ_R1_odd." + subevent + step + "." + comp).c_str()} );
           v1_R_MC.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
           v1_R_MC.SetMarker(kFullSquare);
           v1_R_MC.SetPalette({kOrange+1, kBlue, kGreen+2, kAzure-4, kGray+2, kViolet, kRed,
@@ -108,23 +103,7 @@ void lambda_stf() {
           v1_R_MC.ShiftProjectionAxis(axes.at(kProjection).shift_);
           v1_R_MC.SlightShiftProjectionAxis(0.015);
 
-          auto v1_PsiRP = DoubleDifferentialCorrelation( fileName.c_str(),
-                                                      {("v1/" + particle + "/uPsi/v1.uPsi." + comp).c_str()} );
-          v1_PsiRP.SetSliceVariable(axes.at(kSlice).title_.c_str(), axes.at(kSlice).unit_.c_str());
-          v1_PsiRP.SetMarker(-1);
-          v1_PsiRP.SetPalette({kOrange+1, kBlue, kGreen+2, kAzure-4, kGray+2, kViolet, kRed,
-                              kOrange+1, kBlue, kGreen+2, kAzure-4, kGray+2, kViolet, kRed});
-          v1_PsiRP.SetBiasPalette(false);
-          v1_PsiRP.Rebin({{axes.at(kSelect).sim_name_.c_str(),
-                          {axes.at(kSelect).bin_edges_.at(iEdge), axes.at(kSelect).bin_edges_.at(iEdge+1)}}});
-          v1_PsiRP.SetProjectionAxis({axes.at(kProjection).sim_name_.c_str(), axes.at(kProjection).bin_edges_});
-          v1_PsiRP.SetSliceAxis({axes.at(kSlice).sim_name_.c_str(), axes.at(kSlice).bin_edges_});
-          v1_PsiRP.ShiftSliceAxis(axes.at(kSlice).shift_);
-          v1_PsiRP.Calculate();
-          v1_PsiRP.ShiftProjectionAxis(axes.at(kProjection).shift_);
-
           HeapPicture pic( (axes.at(kSelect).name_ + "_" + std::to_string(iEdge)).c_str(), {1000, 1000});
-
           pic.AddText({0.2, 0.90, particle.c_str()}, 0.025);
           if(evegen == "dcmqgsm") {
             pic.AddText({0.2, 0.87, "5M Au+Au"}, 0.025);
@@ -145,9 +124,6 @@ void lambda_stf() {
           leg1->SetHeader((axes.at(kSlice).title_+axes.at(kSlice).unit_).c_str());
 
           TLegendEntry* entry;
-          entry = leg1->AddEntry("", "#Psi^{RP}", "L");
-          entry->SetMarkerSize(2);
-          entry->SetMarkerStyle(kOpenSquare);
           entry = leg1->AddEntry("", "#Psi(R_{1}^{true})", "P");
           entry->SetMarkerSize(2);
           entry->SetMarkerStyle(kFullSquare);
@@ -156,10 +132,7 @@ void lambda_stf() {
             pic.AddDrawable( obj );
             leg1->AddEntry( obj->GetPoints(), obj->GetTitle().c_str(), "P" );
           }
-          for( auto obj : v1_PsiRP.GetProjections() ){
-            pic.AddDrawable( obj );
-          }
-          pic.SetAxisTitles({(axes.at(kProjection).title_ + axes.at(kProjection).unit_).c_str(), y_axis_title});
+          pic.SetAxisTitles({(axes.at(kProjection).title_ + axes.at(kProjection).unit_).c_str(), "v_{1}^{odd}"});
 
           pic.CustomizeXRange();
           pic.CustomizeYRange();
