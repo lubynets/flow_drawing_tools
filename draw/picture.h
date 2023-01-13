@@ -71,7 +71,7 @@ public:
   TCanvas* GetCanvas() { return canvas_; }
   std::vector<TLegend*> GetLegends() { return legends_; }
   void CustomizeXRange(const float part=1.);
-  void CustomizeYRange(const float part=1.);
+  void CustomizeYRange(const float part=0.9);
   virtual void CustomizeLegend(TLegend* leg) {}
   
   void SetGridX() { canvas_->SetGridx(); }

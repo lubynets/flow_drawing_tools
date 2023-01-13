@@ -13,8 +13,8 @@ void HeapPicture::Draw() {
   }
   for( auto obj : drawable_objects_ ){
     if( obj->IsLine() ) {
-      std::string opt{"L+X+" + obj->GetErrorOption()};
-//       std::string opt{"E3" + obj->GetErrorOption()};
+//       std::string opt{"L+X+" + obj->GetErrorOption()};
+      std::string opt{"E3" + obj->GetErrorOption()};
       stack_->Add(obj->GetPoints(), opt.c_str());
 //       obj->GetPoints()->SetFillStyle(4050);
       if( auto_legend_ )
@@ -201,6 +201,24 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
     leg -> SetY2(place_user.at(kY2));
     leg -> SetOption("br");
 }
+
+std::pair<float, float> HeapPicture::GetYLimits(TGraphErrors* gr) {
+  float lo = std::numeric_limits<float>::max();
+  float hi = std::numeric_limits<float>::min();
+
+  for(int i = 0; i<gr->GetN(); i++) {
+    const float y = gr->GetPointY(i);
+    const float ey = gr->GetErrorY(i);
+    const float err = std::abs(ey/y);
+    if(err < relative_error_threshold_ || relative_error_threshold_ < 0.) {
+      lo = std::min(lo, y-ey);
+      hi = std::max(hi, y+ey);
+    }
+  }
+
+  return std::make_pair(lo, hi);
+}
+
 HeapPicture::HeapPicture(const std::string &name,
                          const std::array<int, 2> &resolution)
     : Picture(name, resolution) {}
