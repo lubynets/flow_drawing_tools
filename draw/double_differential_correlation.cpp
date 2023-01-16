@@ -82,10 +82,10 @@ void DoubleDifferentialCorrelation::ShiftProjectionAxis( const float value ){
     p->ShiftXaxis(value);
 }
 
-void DoubleDifferentialCorrelation::SlightShiftProjectionAxis( float value ) {
+void DoubleDifferentialCorrelation::SlightShiftProjectionAxis( float gap, float moveall ) {
   const int nprojections = projections_.size();
   for(int i=0; i<nprojections; i++) {
-    const float shift = (-1.*nprojections/2 + 0.5 + i)*value;
+    const float shift = (-1.*nprojections/2 + 0.5 + i)*gap + moveall;
     projections_.at(i)->ShiftXaxis(shift);
   }
 }

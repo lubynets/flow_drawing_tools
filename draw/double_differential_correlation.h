@@ -74,7 +74,7 @@ public:
   
   // ShiftProjectionAxis() must be called after Calculate()
   void ShiftProjectionAxis( const float value );
-  void SlightShiftProjectionAxis( float value );
+  void SlightShiftProjectionAxis( float gap, float moveall=0 );
   
   // ShiftSliceAxis() must be called after SetSliceAxis() but before Calculate()
   void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
