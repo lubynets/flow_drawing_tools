@@ -16,7 +16,7 @@ public:
   ReadableObject(std::string file_name,
                  std::vector<std::string> objects)
       : file_name_(std::move(file_name)), objects_(std::move(objects)) {}
-  ~ReadableObject() override = default;
+  ~ReadableObject() override { file_->Close(); }
 protected:
   template <typename T>
   T* ReadObjectFromFile(const std::string& obj_name){
