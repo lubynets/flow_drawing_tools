@@ -5,6 +5,12 @@
 #include "picture.h"
 #include "TLegendEntry.h"
 
+Picture::~Picture() {
+  for(auto& hl : horizontal_lines_) {
+    delete hl;
+  }
+}
+
 void Picture::CustomizeXRange(const float part) {
   const float diff = xmax_ - xmin_;
   const float up = xmax_ + (1-part)/2*diff/part;
@@ -83,6 +89,11 @@ std::pair<float, float> Picture::GetOptimalLegendSize(TLegend* leg) const {
   const float width = 0.012 + 0.012 * max_length;
   const float height = 0.03 * nrows;
   return {width, height}; 
+}
+
+void Picture::AddHorizontalLine(float value) {
+  horizontal_lines_.emplace_back(new TF1( "zero_line", "[0]", -100, 100 ));
+  horizontal_lines_.back()->SetParameter(0, value);
 }
 
 

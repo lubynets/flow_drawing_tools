@@ -40,7 +40,9 @@ void HeapPicture::Draw() {
     functions_.at(0)->Draw();
     if( x_range_.at(0) < x_range_.at(1) ) {
       functions_.at(0)->GetXaxis()->SetLimits(x_range_.at(0), x_range_.at(1));
-      zero_line_->SetRange(x_range_.at(0), x_range_.at(1));
+      for(auto& hl : horizontal_lines_) {
+        hl->SetRange(x_range_.at(0), x_range_.at(1));
+      }
       functions_.at(0)->Draw();
     }
     if( y_range_.at(0) < y_range_.at(1) ) {
@@ -58,7 +60,9 @@ void HeapPicture::Draw() {
   }
   if( x_range_.at(0) < x_range_.at(1) ) {
     stack_->GetXaxis()->SetLimits(x_range_.at(0), x_range_.at(1));
-    zero_line_->SetRange(x_range_.at(0), x_range_.at(1));
+    for(auto& hl : horizontal_lines_) {
+      hl->SetRange(x_range_.at(0), x_range_.at(1));
+    }
     stack_->Draw();
   }
   if( y_range_.at(0) < y_range_.at(1) ) {
@@ -66,7 +70,10 @@ void HeapPicture::Draw() {
     stack_->Draw();
   }
   if( draw_zero_line )
-    zero_line_->Draw("same");
+    horizontal_lines_.at(0)->Draw("same");
+  for(int i=1; i<horizontal_lines_.size(); i++) {
+    horizontal_lines_.at(i)->Draw("same");
+  }
   int i=0;
   for( auto text : texts_ ){
     text->SetNDC();

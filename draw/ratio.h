@@ -92,7 +92,7 @@ public:
     stack_->GetHistogram()->SetTitleSize(gStyle->GetTitleSize("Y")*result_pad_scale, "Y");
     stack_->GetHistogram()->SetTitleOffset(gStyle->GetTitleOffset("Y")*result_pad_scale, "Y");
     if( draw_zero_line )
-      zero_line_->Draw("same");
+      horizontal_lines_.at(0)->Draw("same");
     int i=0;
     for( auto text : texts_ ){
       text->SetNDC();
