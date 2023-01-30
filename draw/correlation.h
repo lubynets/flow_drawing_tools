@@ -57,7 +57,7 @@ public:
 protected:
   Qn::DataContainerStatDiscriminator average_;
   std::vector<Qn::DataContainerStatDiscriminator> combinations_;
-  bool calculate_systematics_from_variation_;
+  bool calculate_systematics_from_variation_{false};
   ClassDefOverride(Correlation, 1)
 };
 

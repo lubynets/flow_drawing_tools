@@ -64,6 +64,7 @@ void MultiCorrelation::AddCorrelation(const std::string& file,
                                       const std::vector<std::string>& objects,
                                       const std::string& title) {
   correlations_.push_back( new Correlation( file, objects, title ) );
+  correlations_.back()->SetCalculateSystematicsFromVariation(is_fill_sys_errors_);
 }
 
 void MultiCorrelation::SlightShiftXAxis( float value ) {
@@ -73,7 +74,9 @@ void MultiCorrelation::SlightShiftXAxis( float value ) {
     for(int j=0; j<correlations_.at(i)->GetPoints()->GetN(); j++){
       auto x = correlations_.at(i)->GetPoints()->GetPointX(j);
       correlations_.at(i)->GetPoints()->SetPointX(j, x+shift);
-      correlations_.at(i)->GetSysErrorPoints()->SetPointX(j, x+shift);
+      if(correlations_.at(i)->GetSysErrorPoints()) {
+        correlations_.at(i)->GetSysErrorPoints()->SetPointX(j, x+shift);
+      }
     }
   }
 }

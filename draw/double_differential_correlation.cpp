@@ -51,6 +51,7 @@ void DoubleDifferentialCorrelation::FillGraphs() {
     projections_.back()->SetPoints( graph );
     projections_.back()->SetTitle(graph->GetTitle());
     projections_.back()->SetStyle(colors.at(i), marker_);
+    projections_.back()->SetIsFillLine(is_fill_line_);
     projections_.back()->SetErrorOption(error_option_);
     graph->SetLineColor(colors.at(i));
     graph->SetMarkerColor(colors.at(i));

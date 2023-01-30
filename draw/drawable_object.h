@@ -43,6 +43,7 @@ public:
   TGraphErrors *GetSysErrorPoints() const { return sys_error_points_; }
   void SetStyle( int color, int marker ){ color_=color; marker_=marker; }
   bool IsLine(){ return marker_ < 0; }
+  bool IsFillLine() const { return is_fill_line_; }
   void SavePoints(){ points_->Write(); }
   std::string GetTitle() { return title_;}
   void SetTitle(const std::string &title) { title_ = title; }
@@ -53,11 +54,13 @@ public:
   void SetSysErrors( double x_error, double relative_sys_error );
   void SetSysErrors( double x_error, std::vector<double> systematical_errors );
   void SetSysErrors( std::vector<double> x_errors, std::vector<double> y_errors );
+  void SetIsFillLine(bool value=true) { is_fill_line_ = value; }
 
 protected:
   void SetMarkerStyle();
   int color_{kBlack};
   int marker_{kFullCircle};
+  bool is_fill_line_{false};
   TF1* fit_{};
   TGraphErrors* points_{nullptr};
   TGraphErrors* sys_error_points_{nullptr};

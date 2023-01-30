@@ -65,6 +65,7 @@ public:
   [[nodiscard]] const std::vector<Graph *> &GetProjections() const { return projections_; }
   void SetSliceAxis(const Qn::AxisD &slice_axis) { slice_axis_ = slice_axis; }
   void SetMarker(int marker) { marker_ = marker; }
+  void SetIsFillLine(bool value=true) { is_fill_line_ = value; }
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
   void SetBiasPalette(bool value=true) { bias_palette_ = value; }
   void Calculate();
@@ -90,6 +91,7 @@ protected:
   std::string error_option_;
   std::vector<Graph*> projections_;
   int marker_{kFullCircle};
+  bool is_fill_line_{false};
   std::vector<int> palette_{
       kPink,
       kMagenta+1,

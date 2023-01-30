@@ -32,10 +32,11 @@ public:
   void SetMarker(int marker) { marker_ = marker; }
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
   void SetErrorOption(const std::string &error_option);
-
   void SlightShiftXAxis( float value );
+  void SetIsFillSysErrors(bool value=true) { is_fill_sys_errors_ = value; }
 
 protected:
+  bool is_fill_sys_errors_{false};
   void ApplyStyle();
   std::vector<Correlation*> correlations_;
   std::vector<int> markers_;

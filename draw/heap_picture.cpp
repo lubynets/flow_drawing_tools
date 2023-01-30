@@ -13,8 +13,12 @@ void HeapPicture::Draw() {
   }
   for( auto obj : drawable_objects_ ){
     if( obj->IsLine() ) {
-//       std::string opt{"L+X+" + obj->GetErrorOption()};
-      std::string opt{"E3" + obj->GetErrorOption()};
+      std::string opt;
+      if(obj->IsFillLine()) {
+        opt = "E3" + obj->GetErrorOption();
+      } else {
+        opt = "L+X+" + obj->GetErrorOption();
+      }
       stack_->Add(obj->GetPoints(), opt.c_str());
 //       obj->GetPoints()->SetFillStyle(4050);
       if( auto_legend_ )
@@ -63,11 +67,11 @@ void HeapPicture::Draw() {
     for(auto& hl : horizontal_lines_) {
       hl->SetRange(x_range_.at(0), x_range_.at(1));
     }
-    stack_->Draw();
+//     stack_->Draw();
   }
   if( y_range_.at(0) < y_range_.at(1) ) {
     stack_->GetYaxis()->SetRangeUser(y_range_.at(0), y_range_.at(1));
-    stack_->Draw();
+//     stack_->Draw();
   }
   if( draw_zero_line )
     horizontal_lines_.at(0)->Draw("same");
