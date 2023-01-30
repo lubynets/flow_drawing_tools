@@ -64,3 +64,21 @@ void DrawableObject::SetSysErrors( std::vector<double> x_errors, std::vector<dou
     sys_error_points_->SetPoint(i, x_err, y_err);
   }
 }
+
+std::vector<float> DrawableObject::GetPointsValues() const {
+  std::vector<float> v;
+  const int N = points_->GetN();
+  for(int i=0; i<N; i++) {
+    v.emplace_back(points_->GetPointY(i));
+  }
+  return v;
+}
+
+std::vector<float> DrawableObject::GetPointsErrors() const {
+  std::vector<float> v;
+  const int N = points_->GetN();
+  for(int i=0; i<N; i++) {
+    v.emplace_back(points_->GetErrorY(i));
+  }
+  return v;
+}

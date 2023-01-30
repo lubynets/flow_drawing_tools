@@ -13,8 +13,10 @@ public:
   void IgnoreSubtrahendErrors(bool is = true) { is_ignore_subtrahend_errors_ = is; }
   
   void Calculate();
-  Graph* GetResult() { return result_; }
-  
+  Graph* GetResult() const { return result_; }
+  std::vector<float> GetPointsValues() const;
+  std::vector<float> GetPointsErrors() const;
+
 protected:
   Graph* minuend_{nullptr};
   Graph* subtrahend_{nullptr};

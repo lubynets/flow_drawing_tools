@@ -37,6 +37,8 @@ public:
     this->RefreshPoints();
     return points_;
   }
+  std::vector<float> GetPointsValues() const;
+  std::vector<float> GetPointsErrors() const;
   TF1 *GetFit() const { return fit_; }
   TGraphErrors *GetSysErrorPoints() const { return sys_error_points_; }
   void SetStyle( int color, int marker ){ color_=color; marker_=marker; }
