@@ -41,6 +41,13 @@ void GraphSubtractor::Calculate() {
   result_->SetPoints(gr_res);
 }
 
+Graph* GraphSubtractor::GetResult() const {
+  if(result_ == nullptr) {
+    throw std::runtime_error("GraphSubtractor::GetResult() - result_ is nullptr");
+  }
+  return result_;
+}
+
 std::vector<float> GraphSubtractor::GetPointsValues() const {
   if(result_ == nullptr) {
     throw std::runtime_error("GraphSubtractor::GetPointsValues() - result_ is nullptr");
