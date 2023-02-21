@@ -54,7 +54,6 @@ set(SOURCES
         draw/multi_correlation.cpp
         draw/graph_subtractor.cpp
         draw/graph_divider.cpp
-#         draw/dd_correlation_difference.cpp
         )
 set(HEADERS
         draw/readable_object.h
@@ -73,7 +72,6 @@ set(HEADERS
         draw/multi_correlation.h
         draw/graph_subtractor.h
         draw/graph_divider.h
-#         draw/dd_correlation_difference.h
         )
 
 set(PCM_FILE_NAME libDraw)
