@@ -11,17 +11,31 @@ Picture::~Picture() {
   }
 }
 
-void Picture::CustomizeXRange(const float part) {
+void Picture::CustomizeXRange(float part) {
   const float diff = xmax_ - xmin_;
   const float up = xmax_ + (1-part)/2*diff/part;
   const float down = xmin_ - (1-part)/2*diff/part;
   SetXRange({down, up});
 }
 
-void Picture::CustomizeYRange(const float part) {
+void Picture::CustomizeYRange(float part) {
   const float diff = ymax_ - ymin_;
   const float up = ymax_ + (1-part)/2*diff/part;
   const float down = ymin_ - (1-part)/2*diff/part;
+  SetYRange({down, up});
+}
+
+void Picture::CustomizeXRangeWithLimits(float lo, float hi, float part) {
+  const float diff = xmax_ - xmin_;
+  const float up = std::min(hi, xmax_ + (1-part)/2*diff/part);
+  const float down = std::max(lo, xmin_ - (1-part)/2*diff/part);
+  SetXRange({down, up});
+}
+
+void Picture::CustomizeYRangeWithLimits(float lo, float hi, float part) {
+  const float diff = ymax_ - ymin_;
+  const float up = std::min(hi, ymax_ + (1-part)/2*diff/part);
+  const float down = std::max(lo, ymin_ - (1-part)/2*diff/part);
   SetYRange({down, up});
 }
 
