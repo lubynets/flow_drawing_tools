@@ -1,31 +1,10 @@
 #include "lambda.h"
 
-bool float_equality(float a, float b) {
-  if (std::fabs(a-b)<1e-5)
-    return true;
-  else
-    return false;
-}
-
-float C_via_b(float b) {
-  std::vector<float> b_edges{0, 4.2, 6.0, 7.3, 8.4, 9.4, 10.3, 11.2};  // dcmqgsm
-//   std::vector<float> b_edges{0, 4.5, 6.3, 7.7, 8.9, 10.0, 10.9, 11.8};  // urqmd
-  if (float_equality(b, b_edges.at(0))) return 0.;
-  if (float_equality(b, b_edges.at(1))) return 10.;
-  if (float_equality(b, b_edges.at(2))) return 20.;
-  if (float_equality(b, b_edges.at(3))) return 30.;
-  if (float_equality(b, b_edges.at(4))) return 40.;
-  if (float_equality(b, b_edges.at(5))) return 50.;
-  if (float_equality(b, b_edges.at(6))) return 60.;
-  if (float_equality(b, b_edges.at(7))) return 70.;
-  return -1;
-}
-
 void lambda_cross_stf() {
   gROOT->Macro( "/home/oleksii/cbmdir/flow_drawing_tools/example/style.cc" );
 
-  std::string evegen = "dcmqgsm";
-//   std::string evegen = "urqmd";
+//   std::string evegen = "dcmqgsm";
+  std::string evegen = "urqmd";
 
   std::string fileName = "/home/oleksii/cbmdir/working/qna/simtracksflow/" + evegen + "/v1andR1.stf." + evegen + ".root";
 
@@ -43,10 +22,10 @@ void lambda_cross_stf() {
 
   axes.at(0).sim_name_ = "SimParticles_pT";
   axes.at(1).sim_name_ = "SimParticles_rapidity";
-  axes.at(2).sim_name_ = "SimEventHeader_b";
+  axes.at(2).sim_name_ = "SimEventHeader_centrality_impactpar";
   axes.at(0).reco_name_ = "SimParticles_pT";
   axes.at(1).reco_name_ = "SimParticles_rapidity";
-  axes.at(2).reco_name_ = "SimEventHeader_b";
+  axes.at(2).reco_name_ = "SimEventHeader_centrality_impactpar";
 
   TFile* fileIn = TFile::Open(fileName.c_str(), "open");
   auto* dc = (Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>*)fileIn->Get<Qn::DataContainer<Qn::StatCalculate,Qn::Axis<double>>>("v1/lambda/uPsi/v1.uPsi.x1x1");
@@ -126,8 +105,8 @@ void lambda_cross_stf() {
             pic.AddText({0.2, 0.84, "UrQMD"}, 0.025);
           }
           pic.AddText({0.2, 0.81, "12A GeV/c"}, 0.025);
-          pic.AddText({0.2, 0.78, (axes.at(kSelect).title_ + ": " + to_string_with_precision(C_via_b(axes.at(kSelect).bin_edges_.at(iEdge) + axes.at(kSelect).shift_), axes.at(kSelect).precision_) +
-                                  " - " + to_string_with_precision(C_via_b(axes.at(kSelect).bin_edges_.at(iEdge+1) + axes.at(kSelect).shift_), axes.at(kSelect).precision_) + axes.at(kSelect).unit_).c_str()}, 0.025);
+          pic.AddText({0.2, 0.78, (axes.at(kSelect).title_ + ": " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) +
+                                  " - " + to_string_with_precision(axes.at(kSelect).bin_edges_.at(iEdge+1) + axes.at(kSelect).shift_, axes.at(kSelect).precision_) + axes.at(kSelect).unit_).c_str()}, 0.025);
           pic.AddText({0.2, 0.75, subevent.c_str()}, 0.025);
           pic.AddText({0.2, 0.72, comp.c_str()}, 0.025);
 

@@ -53,6 +53,7 @@ set(SOURCES
         draw/double_differential_histogram.cpp
         draw/multi_correlation.cpp
         draw/graph_subtractor.cpp
+        draw/graph_divider.cpp
 #         draw/dd_correlation_difference.cpp
         )
 set(HEADERS
@@ -71,6 +72,7 @@ set(HEADERS
         draw/double_differential_histogram.h
         draw/multi_correlation.h
         draw/graph_subtractor.h
+        draw/graph_divider.h
 #         draw/dd_correlation_difference.h
         )
 

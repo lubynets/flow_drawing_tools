@@ -25,7 +25,7 @@ void psd_cross() {
       multicor.AddCorrelation(fileName, {"R1/res_cross." + correls.at(i) + "." + correls.at(j) + ".x1y1"}, "mc_" + correls.at(i) + "." + correls.at(j) + "_x1y1");
     }
 
-    multicor.SlightShiftXAxis(0.1);
+    multicor.SlightShiftXAxis(1);
 
     HeapPicture pic("picture", {1000, 1000});
     if(evegen == "dcmqgsm") {
@@ -52,7 +52,7 @@ void psd_cross() {
     leg1->AddEntry(multicor.GetCorrelations().at(1)->GetPoints(), correls.at(1).c_str(), "P");
     leg1->AddEntry(multicor.GetCorrelations().at(2)->GetPoints(), correls.at(2).c_str(), "P");
 
-    pic.SetAxisTitles( {"b, fm", "Q_{x}Q_{y}"} );
+    pic.SetAxisTitles( {"Centrality, %", "Q_{x}Q_{y}"} );
     pic.CustomizeXRange();
     pic.CustomizeYRange();
     pic.AddLegend(leg1);
