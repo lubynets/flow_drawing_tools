@@ -19,12 +19,16 @@ public:
   DoubleDifferentialCorrelation(const std::string &file_name,
                                 const std::vector<std::string> &objects)
       : ReadableObject(file_name, objects) {
-    std::vector<Qn::DataContainerStatDiscriminator> containers;
+    std::vector<Qn::DataContainerStatMagic> containers;
     for( const auto& name : objects ){
+#ifdef DiscriminatorMode
       try {
         containers.emplace_back(
             *(this->ReadObjectFromFile<Qn::DataContainerStatDiscriminator>(name)));
       } catch (std::exception&) {
+      std::cout << "Warning: DoubleDifferentialCorrelation::DoubleDifferentialCorrelation(" <<
+                   name << ") - StatCollect or StatCalculate will be casted to StatDiscriminator\n";
+#endif
         try {
         containers.emplace_back(
             *(this->ReadObjectFromFile<Qn::DataContainerStatCalculate>(name)));
@@ -32,7 +36,9 @@ public:
           containers.emplace_back(
             *(this->ReadObjectFromFile<Qn::DataContainerStatCollect>(name)));
         }
+#ifdef DiscriminatorMode
       }
+#endif
     }
     correlation_ = containers.front();
     for( size_t i=1; i< containers.size(); ++i )
@@ -40,7 +46,7 @@ public:
     correlation_ = correlation_/ (double)containers.size();
   }
   ~DoubleDifferentialCorrelation() override = default;
-  Qn::DataContainerStatDiscriminator &GetCorrelation() {
+  Qn::DataContainerStatMagic &GetCorrelation() {
     return correlation_;
   }
   void Scale( double scale ){ correlation_ = correlation_*scale; }
@@ -81,7 +87,7 @@ public:
   void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
 protected:
   void FillGraphs();
-  Qn::DataContainerStatDiscriminator correlation_;
+  Qn::DataContainerStatMagic correlation_;
   Qn::AxisD projection_axis_;
   Qn::AxisD slice_axis_;
   float slice_axis_shift_{0};

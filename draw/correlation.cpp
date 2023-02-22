@@ -9,12 +9,16 @@ Correlation::Correlation(const std::string &file_name,
                          const std::vector<std::string> &objects,
                          const std::string &title)
     : DrawableObject(file_name, objects, title) {
-  std::vector<Qn::DataContainerStatDiscriminator> containers;
+  std::vector<Qn::DataContainerStatMagic> containers;
   for( const auto& name : objects ){
+#ifdef DiscriminatorMode
     try {
       containers.emplace_back(
           *(this->ReadObjectFromFile<Qn::DataContainerStatDiscriminator>(name)));
     } catch (std::exception&) {
+      std::cout << "Warning: Correlation::Correlation(" <<
+                   name << ") - StatCollect or StatCalculate will be casted to StatDiscriminator\n";
+#endif
       try {
       containers.emplace_back(
           *(this->ReadObjectFromFile<Qn::DataContainerStatCalculate>(name)));
@@ -22,7 +26,9 @@ Correlation::Correlation(const std::string &file_name,
         containers.emplace_back(
           *(this->ReadObjectFromFile<Qn::DataContainerStatCollect>(name)));
       }
+#ifdef DiscriminatorMode
     }
+#endif
   }
   average_ = containers.front();
   for( size_t i=1; i< containers.size(); ++i )
@@ -58,7 +64,7 @@ void Correlation::RefreshPoints() {
   if( fit_ )
     points_->Fit(fit_);
   if( calculate_systematics_from_variation_ ){
-    std::vector<Qn::DataContainerStatDiscriminator> variations;
+    std::vector<Qn::DataContainerStatMagic> variations;
     for( const auto& combination : combinations_ ){
       variations.emplace_back( average_ - combination );
     }

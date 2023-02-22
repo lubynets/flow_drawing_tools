@@ -11,6 +11,21 @@
 
 #include "drawable_object.h"
 
+//***************************************************************
+// To be uncommented if use with StatDiscriminator and to leave commented if not:
+
+// #define DiscriminatorMode
+
+// Very bad practice, sorry. To be fixed ASAP
+//***************************************************************
+
+
+#ifdef DiscriminatorMode
+#define DataContainerStatMagic DataContainerStatDiscriminator
+#else
+#define DataContainerStatMagic DataContainerStatCalculate
+#endif
+
 class Correlation : public DrawableObject {
 public:
   Correlation() = default;
@@ -20,7 +35,7 @@ public:
               const std::string &title);
   ~Correlation() override;
   void RefreshPoints() override;
-  Qn::DataContainerStatDiscriminator &GetCorrelation() {
+  Qn::DataContainerStatMagic &GetCorrelation() {
     return average_;
   }
   void Rebin( const std::vector<Qn::AxisD>& axes){
@@ -55,8 +70,8 @@ public:
   }
 
 protected:
-  Qn::DataContainerStatDiscriminator average_;
-  std::vector<Qn::DataContainerStatDiscriminator> combinations_;
+  Qn::DataContainerStatMagic average_;
+  std::vector<Qn::DataContainerStatMagic> combinations_;
   bool calculate_systematics_from_variation_{false};
   ClassDefOverride(Correlation, 1)
 };
