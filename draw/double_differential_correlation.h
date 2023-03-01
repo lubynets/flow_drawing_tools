@@ -85,6 +85,10 @@ public:
   
   // ShiftSliceAxis() must be called after SetSliceAxis() but before Calculate()
   void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
+  void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
+#ifdef DiscriminatorMode
+  void SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
+#endif
 protected:
   void FillGraphs();
   Qn::DataContainerStatMagic correlation_;
@@ -112,7 +116,10 @@ protected:
       kRed,
   };
   bool bias_palette_{true};
-
+  Qn::Stat::ErrorType error_type_{Qn::Stat::ErrorType::BOOTSTRAP};
+#ifdef DiscriminatorMode
+  Qn::Stat::ErrorType mean_type_{Qn::Stat::ErrorType::PROPAGATION};
+#endif
 };
 
 #endif // FLOW_DRAWING_TOOLS_DRAW_DOUBLE_DIFFERENTIAL_CORRELATION_H_

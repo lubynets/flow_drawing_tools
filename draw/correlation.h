@@ -69,10 +69,19 @@ public:
         calculate_systematics_from_variation;
   }
 
+  void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
+#ifdef DiscriminatorMode
+  void SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
+#endif
+
 protected:
   Qn::DataContainerStatMagic average_;
   std::vector<Qn::DataContainerStatMagic> combinations_;
   bool calculate_systematics_from_variation_{false};
+  Qn::Stat::ErrorType error_type_{Qn::Stat::ErrorType::BOOTSTRAP};
+#ifdef DiscriminatorMode
+  Qn::Stat::ErrorType mean_type_{Qn::Stat::ErrorType::PROPAGATION};
+#endif
   ClassDefOverride(Correlation, 1)
 };
 

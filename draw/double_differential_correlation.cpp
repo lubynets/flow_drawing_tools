@@ -6,6 +6,12 @@
 #include <iomanip>
 
 void DoubleDifferentialCorrelation::Calculate() {
+  correlation_.SetErrors(error_type_);
+#ifdef DiscriminatorMode
+  for(auto& av : correlation_) {
+    av.SetMeanType(mean_type_);
+  }
+#endif
   this->Rebin({projection_axis_, slice_axis_});
   for( size_t slice_bin=0; slice_bin <slice_axis_.size(); slice_bin++ ){
     std::string name{ slice_axis_.Name() };

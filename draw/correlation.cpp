@@ -52,7 +52,12 @@ Correlation operator/( const Correlation& num, const Correlation& den){
 }
 
 void Correlation::RefreshPoints() {
-  average_.SetErrors(Qn::StatCalculate::ErrorType::BOOTSTRAP);
+  average_.SetErrors(error_type_);
+#ifdef DiscriminatorMode
+  for(auto& av : average_) {
+    av.SetMeanType(mean_type_);
+  }
+#endif
   if(points_ == nullptr) {
     points_ = Qn::ToTGraph(average_);
   }
