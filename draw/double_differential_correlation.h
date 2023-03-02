@@ -80,8 +80,8 @@ public:
   void RecalculateProjectionAxis( const std::vector<double>& x_axis );
   
   // ShiftProjectionAxis() must be called after Calculate()
-  void ShiftProjectionAxis( const float value );
-  void SlightShiftProjectionAxis( float gap, float moveall=0 );
+  void ShiftProjectionAxis( float value ) { shift_projection_axis_ = value; };
+  void SlightShiftProjectionAxis( float gap, float moveall=0 ) { slight_shift_projection_axis_ = std::make_pair(gap, moveall); };
   
   // ShiftSliceAxis() must be called after SetSliceAxis() but before Calculate()
   void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
@@ -89,8 +89,17 @@ public:
 #ifdef DiscriminatorMode
   void SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
 #endif
+
+  friend DoubleDifferentialCorrelation Plus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
+  friend DoubleDifferentialCorrelation Minus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
+  friend DoubleDifferentialCorrelation Multiply(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
+  friend DoubleDifferentialCorrelation Divide(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
+  void DivideValueByError();
+
 protected:
   void FillGraphs();
+  void ExeShiftProjectionAxis();
+  void ExeSlightShiftProjectionAxis();
   Qn::DataContainerStatMagic correlation_;
   Qn::AxisD projection_axis_;
   Qn::AxisD slice_axis_;
@@ -102,6 +111,8 @@ protected:
   std::vector<Graph*> projections_;
   int marker_{kFullCircle};
   bool is_fill_line_{false};
+  float shift_projection_axis_{0.f};
+  std::pair<float, float> slight_shift_projection_axis_{0.f, 0.f};
   std::vector<int> palette_{
       kPink,
       kMagenta+1,

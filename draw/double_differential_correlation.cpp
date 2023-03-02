@@ -64,6 +64,8 @@ void DoubleDifferentialCorrelation::FillGraphs() {
     graph->SetMarkerColor(marker_);
     ++i;
   }
+  ExeShiftProjectionAxis();
+  ExeSlightShiftProjectionAxis();
 }
 void DoubleDifferentialCorrelation::SaveToFile(const std::string &file_name) {
   auto file_out = TFile::Open( file_name.c_str(), "recreate" );
@@ -84,15 +86,74 @@ void DoubleDifferentialCorrelation::RecalculateProjectionAxis( const std::vector
     p->RecalculateXaxis(x_axis);  
 }
 
-void DoubleDifferentialCorrelation::ShiftProjectionAxis( const float value ){
+void DoubleDifferentialCorrelation::ExeShiftProjectionAxis(){
   for(auto& p : projections_)
-    p->ShiftXaxis(value);
+    p->ShiftXaxis(shift_projection_axis_);
 }
 
-void DoubleDifferentialCorrelation::SlightShiftProjectionAxis( float gap, float moveall ) {
+void DoubleDifferentialCorrelation::ExeSlightShiftProjectionAxis() {
   const int nprojections = projections_.size();
+  const float gap = slight_shift_projection_axis_.first;
+  const float moveall = slight_shift_projection_axis_.second;
   for(int i=0; i<nprojections; i++) {
     const float shift = (-1.*nprojections/2 + 0.5 + i)*gap + moveall;
     projections_.at(i)->ShiftXaxis(shift);
   }
+}
+
+DoubleDifferentialCorrelation Plus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs) {
+  DoubleDifferentialCorrelation result = lhs;
+  result.correlation_ = lhs.correlation_ + rhs.correlation_;
+  result.projection_points_.clear();
+  result.projections_.clear();
+  result.Calculate();
+
+  return result;
+}
+
+DoubleDifferentialCorrelation Minus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs) {
+  DoubleDifferentialCorrelation result = lhs;
+  result.correlation_ = lhs.correlation_ - rhs.correlation_;
+  result.projection_points_.clear();
+  result.projections_.clear();
+  result.Calculate();
+
+  return result;
+}
+
+DoubleDifferentialCorrelation Multiply(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs) {
+  DoubleDifferentialCorrelation result = lhs;
+  result.correlation_ = lhs.correlation_ * rhs.correlation_;
+  result.projection_points_.clear();
+  result.projections_.clear();
+  result.Calculate();
+
+  return result;
+}
+
+DoubleDifferentialCorrelation Divide(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs) {
+  DoubleDifferentialCorrelation result = lhs;
+  result.correlation_ = lhs.correlation_ / rhs.correlation_;
+  result.projection_points_.clear();
+  result.projections_.clear();
+  result.Calculate();
+
+  return result;
+}
+
+void DoubleDifferentialCorrelation::DivideValueByError() {
+  projections_.clear();
+  for(auto& pp : projection_points_) {
+    if(pp == nullptr) {
+      throw std::runtime_error("DoubleDifferentialCorrelation::DivideValueByError() - projection_points_[] is nullptr");
+    }
+
+    for(int ip=0; ip<pp->GetN(); ip++) {
+      const float y = pp->GetPointY(ip);
+      const float ey = pp->GetErrorY(ip);
+      pp->SetPointY(ip, y/ey);
+      pp->SetPointError(ip, 0., 0.);
+    }
+  }
+  FillGraphs();
 }

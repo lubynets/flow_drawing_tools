@@ -14,7 +14,7 @@
 //***************************************************************
 // To be uncommented if use with StatDiscriminator and to leave commented if not:
 
-// #define DiscriminatorMode
+#define DiscriminatorMode
 
 // Very bad practice, sorry. To be fixed ASAP
 //***************************************************************
@@ -68,6 +68,12 @@ public:
     calculate_systematics_from_variation_ =
         calculate_systematics_from_variation;
   }
+
+  friend Correlation Plus(const Correlation& lhs, const Correlation& rhs);
+  friend Correlation Minus(const Correlation& lhs, const Correlation& rhs);
+  friend Correlation Multiply(const Correlation& lhs, const Correlation& rhs);
+  friend Correlation Divide(const Correlation& lhs, const Correlation& rhs);
+  void DivideValueByError();
 
   void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
 #ifdef DiscriminatorMode

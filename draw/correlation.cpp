@@ -93,3 +93,56 @@ void Correlation::RefreshPoints() {
   }
   this->SetMarkerStyle();
 }
+
+Correlation Plus(const Correlation& lhs, const Correlation& rhs) {
+  Correlation result = lhs;
+  result.average_ = lhs.average_ + rhs.average_;
+  for(int ic=0; ic<lhs.combinations_.size(); ic++) {
+    result.combinations_.at(ic) = lhs.combinations_.at(ic) + rhs.combinations_.at(ic);
+  }
+
+  return result;
+}
+
+Correlation Minus(const Correlation& lhs, const Correlation& rhs) {
+  Correlation result = lhs;
+  result.average_ = lhs.average_ - rhs.average_;
+  for(int ic=0; ic<lhs.combinations_.size(); ic++) {
+    result.combinations_.at(ic) = lhs.combinations_.at(ic) - rhs.combinations_.at(ic);
+  }
+
+  return result;
+}
+
+Correlation Multiply(const Correlation& lhs, const Correlation& rhs) {
+  Correlation result = lhs;
+  result.average_ = lhs.average_ * rhs.average_;
+  for(int ic=0; ic<lhs.combinations_.size(); ic++) {
+    result.combinations_.at(ic) = lhs.combinations_.at(ic) * rhs.combinations_.at(ic);
+  }
+
+  return result;
+}
+
+Correlation Divide(const Correlation& lhs, const Correlation& rhs) {
+  Correlation result = lhs;
+  result.average_ = lhs.average_ / rhs.average_;
+  for(int ic=0; ic<lhs.combinations_.size(); ic++) {
+    result.combinations_.at(ic) = lhs.combinations_.at(ic) / rhs.combinations_.at(ic);
+  }
+
+  return result;
+}
+
+void Correlation::DivideValueByError() {
+  if(points_ == nullptr) {
+    throw std::runtime_error("Correlation::DivideValueByError() - points_ is nullptr");
+  }
+
+  for(int ip=0; ip<points_->GetN(); ip++) {
+    const float y = points_->GetPointY(ip);
+    const float ey = points_->GetErrorY(ip);
+    points_->SetPointY(ip, y/ey);
+    points_->SetPointError(ip, 0., 0.);
+  }
+}
