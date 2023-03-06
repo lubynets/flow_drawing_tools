@@ -157,3 +157,14 @@ void DoubleDifferentialCorrelation::DivideValueByError() {
   }
   FillGraphs();
 }
+
+void DoubleDifferentialCorrelation::RenameAxis(const std::string& from, const std::string& to) {
+  std::vector<Qn::AxisD>& axes = correlation_.GetAxes();
+  for(Qn::AxisD& ax : axes) {
+    if(ax.Name() == from) {
+      ax.SetName(to);
+      return;
+    }
+  }
+  throw std::runtime_error("DoubleDifferentialCorrelation::RenameAxis() - axis from is absent");
+}

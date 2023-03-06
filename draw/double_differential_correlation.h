@@ -79,7 +79,7 @@ public:
   void SetErrorOption(const std::string &error_option);
   void RecalculateProjectionAxis( const std::vector<double>& x_axis );
   
-  // ShiftProjectionAxis() must be called after Calculate()
+  // now ShiftProjectionAxis() must be called before Calculate()
   void ShiftProjectionAxis( float value ) { shift_projection_axis_ = value; };
   void SlightShiftProjectionAxis( float gap, float moveall=0 ) { slight_shift_projection_axis_ = std::make_pair(gap, moveall); };
   
@@ -89,6 +89,8 @@ public:
 #ifdef DiscriminatorMode
   void SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
 #endif
+
+  void RenameAxis(const std::string& from, const std::string& to);
 
   friend DoubleDifferentialCorrelation Plus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
   friend DoubleDifferentialCorrelation Minus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
@@ -126,7 +128,7 @@ protected:
       kOrange-3,
       kRed,
   };
-  bool bias_palette_{true};
+  bool bias_palette_{false};
   Qn::Stat::ErrorType error_type_{Qn::Stat::ErrorType::BOOTSTRAP};
 #ifdef DiscriminatorMode
   Qn::Stat::ErrorType mean_type_{Qn::Stat::ErrorType::PROPAGATION};
