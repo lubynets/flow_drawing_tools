@@ -21,7 +21,7 @@ std::vector<Axis> axes // 3122, 310
   {"pT", "SimParticles_pT", "ReconstructedParticles_pT", "pT", "p_{T}", ", GeV/c", {}, 0., 1},
 //   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{LAB}", "", {}, 0, 1},
   {"rapidity", "SimParticles_rapidity", "ReconstructedParticles_rapidity", "y", "y_{CM}", "", {}, -1.62179, 1},
-  {"centrality", "AnaEventHeader_centrality_tracks", "AnaEventHeader_centrality_tracks", "centrality", "centrality", ", %", {}, 0., 0}
+  {"centrality", "RecEventHeader_centrality_tracks", "RecEventHeader_centrality_tracks", "centrality", "centrality", ", %", {}, 0., 0}
 };
   
 // std::vector<Axis> axes  // 3312
@@ -70,6 +70,13 @@ void IntegrateSliceAxis() {
 void SetSelectAxisBinEdges(std::vector<double> binedges){ axes.at(kSelect).bin_edges_ = binedges; };
 void SetSliceAxisBinEdges(std::vector<double> binedges){ axes.at(kSlice).bin_edges_ = binedges; };
 void SetProjectionAxisBinEdges(std::vector<double> binedges){ axes.at(kProjection).bin_edges_ = binedges; };
+
+enum DrawOption {
+  kPlain,
+  kDifference,
+  kChi2,
+  kRatio
+};
 
 template <typename T>
 std::string to_string_with_precision(const T a_value, const int n = 6) {

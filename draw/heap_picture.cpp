@@ -16,11 +16,11 @@ void HeapPicture::Draw() {
       std::string opt;
       if(obj->IsFillLine()) {
         opt = "E3" + obj->GetErrorOption();
+        if(obj->GetPoints()->GetLineStyle() == 2) obj->GetPoints()->SetFillStyle(3244);
       } else {
         opt = "L+X+" + obj->GetErrorOption();
       }
       stack_->Add(obj->GetPoints(), opt.c_str());
-//       obj->GetPoints()->SetFillStyle(4050);
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
       if( obj->GetSysErrorPoints() )
