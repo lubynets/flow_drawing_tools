@@ -3,6 +3,9 @@
 //
 
 #include "double_differential_correlation.h"
+
+#include "QnToolsHelper.h"
+
 #include <iomanip>
 
 void DoubleDifferentialCorrelation::Calculate() {
@@ -22,7 +25,11 @@ void DoubleDifferentialCorrelation::Calculate() {
     lo += slice_axis_shift_;
     hi += slice_axis_shift_;
     std::string graph_name{ name+"_"+std::to_string(slice_bin) };
-    projection_points_.push_back( Qn::ToTGraph( proj_container ) );
+    if(draw_errors_as_mean_.first == false) {
+      projection_points_.push_back( Qn::ToTGraph( proj_container ) );
+    } else {
+      projection_points_.push_back( ErrorsToTGraph(proj_container, draw_errors_as_mean_.second) );
+    }
     projection_points_.back()->SetName( graph_name.c_str() );
     std::ostringstream stream_lo;
     stream_lo << std::setprecision(2) << lo;

@@ -3,6 +3,8 @@
 //
 
 #include "correlation.h"
+
+#include "QnToolsHelper.h"
 ClassImp(Correlation);
 
 Correlation::Correlation(const std::string &file_name,
@@ -59,7 +61,11 @@ void Correlation::RefreshPoints() {
   }
 #endif
   if(points_ == nullptr) {
-    points_ = Qn::ToTGraph(average_);
+    if(draw_errors_as_mean_.first == false) {
+      points_ = Qn::ToTGraph( average_ );
+    } else {
+      points_ = ErrorsToTGraph(average_, draw_errors_as_mean_.second);
+    }
   }
   for( int i=0; i<points_->GetN(); ++i ){
     auto y_err = points_->GetErrorY(i);

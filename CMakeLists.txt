@@ -72,6 +72,7 @@ set(HEADERS
         draw/multi_correlation.h
         draw/graph_subtractor.h
         draw/graph_divider.h
+        draw/QnToolsHelper.h
         )
 
 set(PCM_FILE_NAME libDraw)
