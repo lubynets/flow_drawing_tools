@@ -79,6 +79,10 @@ public:
   
   void SetGridX() { canvas_->SetGridx(); }
   void SetGridY() { canvas_->SetGridy(); }
+  void SetGridXY() {
+    this->SetGridX();
+    this->SetGridY();
+  }
   
 
 protected:

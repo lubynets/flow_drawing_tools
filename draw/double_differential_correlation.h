@@ -87,9 +87,7 @@ public:
   void ShiftSliceAxis( const float value )  { slice_axis_shift_ = value; }
   void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
   void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false ) { draw_errors_as_mean_.first = is_draw; draw_errors_as_mean_.second = multiply_by_sqrt_N; }
-#ifdef DiscriminatorMode
-  void SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
-#endif
+  void SetMeanType(Qn::Stat::ErrorType type);
 
   void RenameAxis(const std::string& from, const std::string& to);
 

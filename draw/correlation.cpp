@@ -152,3 +152,11 @@ void Correlation::DivideValueByError() {
     points_->SetPointError(ip, 0., 0.);
   }
 }
+
+#ifdef DiscriminatorMode
+  void Correlation::SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
+#else
+  void Correlation::SetMeanType(Qn::Stat::ErrorType type) {
+    std::cout << "Warning! Correlation::SetMeanType() is applicable only in QnDiscriminator mode\n";
+  }
+#endif

@@ -78,9 +78,7 @@ public:
   void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false ) { draw_errors_as_mean_.first = is_draw; draw_errors_as_mean_.second = multiply_by_sqrt_N; }
 
   void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
-#ifdef DiscriminatorMode
-  void SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
-#endif
+  void SetMeanType(Qn::Stat::ErrorType type);
 
 protected:
   Qn::DataContainerStatMagic average_;

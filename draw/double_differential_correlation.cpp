@@ -175,3 +175,11 @@ void DoubleDifferentialCorrelation::RenameAxis(const std::string& from, const st
   }
   throw std::runtime_error("DoubleDifferentialCorrelation::RenameAxis() - axis from is absent");
 }
+
+#ifdef DiscriminatorMode
+  void DoubleDifferentialCorrelation::SetMeanType(Qn::Stat::ErrorType type) { mean_type_ = type; }
+#else
+  void DoubleDifferentialCorrelation::SetMeanType(Qn::Stat::ErrorType type) {
+    std::cout << "Warning! DoubleDifferentialCorrelation::SetMeanType() is applicable only in QnDiscriminator mode\n";
+  }
+#endif
