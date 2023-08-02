@@ -11,15 +11,6 @@
 
 #include "drawable_object.h"
 
-//***************************************************************
-// To be uncommented if use with StatDiscriminator and to leave commented if not:
-
-// #define DiscriminatorMode
-
-// Very bad practice, sorry. To be fixed ASAP
-//***************************************************************
-
-
 #ifdef DiscriminatorMode
 #define DataContainerStatMagic DataContainerStatDiscriminator
 #else

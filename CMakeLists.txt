@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(flow_drawing_tools)
+#set(CMAKE_CXX_FLAGS "-Wall -DDiscriminatorMode")
 set(CMAKE_CXX_FLAGS "-Wall")
 set (QnDrawer_VERSION_MAJOR 0)
 set (QnDrawer_VERSION_MINOR 9)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE debug)
+
+option(DISCRIMINATOR_MODE "Whether to activate StatDiscriminator or not" OFF)
+if (DISCRIMINATOR_MODE)
+    add_definitions(-DDiscriminatorMode)
+endif()
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
