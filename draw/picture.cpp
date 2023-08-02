@@ -9,6 +9,9 @@ Picture::~Picture() {
   for(auto& hl : horizontal_lines_) {
     delete hl;
   }
+  for(auto& fu : functions_) {
+    delete fu;
+  }
 }
 
 void Picture::CustomizeXRange(float part) {
