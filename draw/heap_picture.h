@@ -37,6 +37,9 @@ protected:
 
   std::pair<float, float> GetYLimits(TGraphErrors* gr);
   float relative_error_threshold_{-1.};
+
+  void FillStackWithDrawableObjects();
+  void CommonDraw();
   
   ClassDefOverride(HeapPicture, 1)
 };
