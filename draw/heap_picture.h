@@ -7,6 +7,8 @@
 
 #include "picture.h"
 
+#include <TPad.h>
+
 class HeapPicture : public Picture {
 public:
   HeapPicture();
@@ -29,18 +31,17 @@ public:
   void SetAxisTitles(const std::vector<std::string> &axis_titles) override;
   void SetRelErrorThreshold(float val) { relative_error_threshold_ = val; }
   void Draw() override;
+  void DrawPad(TVirtualPad* pad = nullptr);
   void CustomizeLegend(TLegend* leg) override;
 
 protected:
   
   std::vector<DrawableObject*> drawable_objects_;
-
-  std::pair<float, float> GetYLimits(TGraphErrors* gr);
   float relative_error_threshold_{-1.};
 
+  std::pair<float, float> GetYLimits(TGraphErrors* gr);
   void FillStackWithDrawableObjects();
-  void CommonDraw();
-  
+
   ClassDefOverride(HeapPicture, 1)
 };
 

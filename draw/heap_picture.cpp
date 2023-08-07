@@ -7,11 +7,14 @@
 ClassImp(HeapPicture)
 
 void HeapPicture::Draw() {
-  canvas_->cd();
-  CommonDraw();
+  DrawPad();
 }
 
-void HeapPicture::CommonDraw() {
+void HeapPicture::DrawPad(TVirtualPad* pad) {
+  if(pad == nullptr){
+    pad = canvas_->GetPad(0);
+  }
+  pad->cd();
   if(auto_legend_){
     assert(legends_.empty());
     legends_.emplace_back( new TLegend() );
@@ -49,11 +52,9 @@ void HeapPicture::CommonDraw() {
     for(auto& hl : horizontal_lines_) {
       hl->SetRange(x_range_.at(0), x_range_.at(1));
     }
-//     stack_->Draw();
   }
   if( y_range_.at(0) < y_range_.at(1) ) {
     stack_->GetYaxis()->SetRangeUser(y_range_.at(0), y_range_.at(1));
-//     stack_->Draw();
   }
   if( draw_zero_line )
     horizontal_lines_.at(0)->Draw("same");
@@ -64,13 +65,18 @@ void HeapPicture::CommonDraw() {
   for( auto text : texts_ ){
     text->SetNDC();
     text->SetTextSize(text_sizes_.at(i));
-//    text->SetLineWidth(1);
-//    text.SetLineColor(kBlack);
+    if(text_intramargin_xy_.at(i).first != -1) {
+      const float xNDC = pad->GetLeftMargin() + text_intramargin_xy_.at(i).first * (1. - pad->GetRightMargin() - pad->GetLeftMargin());
+      const float yNDC = pad->GetBottomMargin() + text_intramargin_xy_.at(i).second * (1. - pad->GetTopMargin() - pad->GetBottomMargin());
+      texts_.at(i)->SetX(xNDC);
+      texts_.at(i)->SetY(yNDC);
+    }
     text->Draw("same");
     ++i;
   }
   for(auto legend : legends_) {
     assert(legend);
+    CustomizeLegend(legend);
     legend->Draw("same");
   }
 }
@@ -202,7 +208,7 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
   
   for(auto& pl : places) {
     bool is_good_place = true;
-    std::vector<float> place_user = TransformToUser(canvas_, pl);
+    std::vector<float> place_user = TransformToUser(pl);
     for(auto& drob : drawable_objects_) {
       TGraph* gr = (TGraph*)drob->GetPoints();
       if(OverlapWithGraph(gr, place_user)) {
@@ -220,7 +226,7 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
       return;
     }
   }
-    std::vector<float> place_user = TransformToUser(canvas_, places.at(0));
+    std::vector<float> place_user = TransformToUser(places.at(0));
     leg -> SetX1(place_user.at(kX1));
     leg -> SetY1(place_user.at(kY1));
     leg -> SetX2(place_user.at(kX2));

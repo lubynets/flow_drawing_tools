@@ -66,7 +66,7 @@ public:
   friend Correlation Divide(const Correlation& lhs, const Correlation& rhs);
   void DivideValueByError();
 
-  void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false ) { draw_errors_as_mean_.first = is_draw; draw_errors_as_mean_.second = multiply_by_sqrt_N; }
+  void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false );
 
   void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
   void SetMeanType(Qn::Stat::ErrorType type);
@@ -75,7 +75,7 @@ protected:
   Qn::DataContainerStatMagic average_;
   std::vector<Qn::DataContainerStatMagic> combinations_;
   bool calculate_systematics_from_variation_{false};
-  std::pair<bool, bool> draw_errors_as_mean_{false, false};  // first: draw error or not; second: if draw - multiply by sqrt(Neff) or not
+  std::bitset<2> draw_errors_as_mean_{0};  // bit 0: draw error or not; bit 1: if draw - multiply by sqrt(Neff) or not
   Qn::Stat::ErrorType error_type_{Qn::Stat::ErrorType::BOOTSTRAP};
 #ifdef DiscriminatorMode
   Qn::Stat::ErrorType mean_type_{Qn::Stat::ErrorType::PROPAGATION};

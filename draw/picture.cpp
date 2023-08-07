@@ -51,7 +51,7 @@ bool Picture::OverlapRectangles(std::vector<float> rect1, std::vector<float> rec
   return true;
 }
 
-std::vector<float> Picture::TransformToUser(TCanvas* canvas, std::vector<float> x) const {
+std::vector<float> Picture::TransformToUser(std::vector<float> x) const {
   // Transforms from Pad coordinates to User coordinates.
   // This can probably be replaced by using the built-in conversion commands.
 
@@ -59,20 +59,12 @@ std::vector<float> Picture::TransformToUser(TCanvas* canvas, std::vector<float> 
   const float xlength = x_range_.at(1) - xstart;
   float xlow = xlength * x.at(kX1) + xstart;
   float xhigh = xlength * x.at(kX2) + xstart;
-//   if (canvas->GetLogx()) {
-//     xlow = std::pow(10, xlow);
-//     xhigh = std::pow(10, xhigh);
-//   }
 
   const float ystart = y_range_.at(0);
   const float ylength = y_range_.at(1) - ystart;
   float ylow = ylength * x.at(kY1) + ystart;
   float yhigh = ylength * x.at(kY2) + ystart;
-//   if (canvas->GetLogy()) {
-//     ylow = std::pow(10, ylow);
-//     yhigh = std::pow(10, yhigh);
-//   }
-     
+
   return {xlow, ylow, xhigh, yhigh};
 }
 
@@ -113,5 +105,16 @@ void Picture::AddHorizontalLine(float value) {
   horizontal_lines_.back()->SetParameter(0, value);
 }
 
+void Picture::AddText( TLatex text, float size) {
+  texts_.push_back(new TLatex(text));
+  text_sizes_.push_back(size);
+  text_intramargin_xy_.push_back(std::make_pair(-1., -1.));
+}
+
+void Picture::AddText( std::string text, float size, std::pair<float, float> intramargin_xy ) {
+  texts_.push_back(new TLatex({0., 0., text.c_str()}));
+  text_sizes_.push_back(size);
+  text_intramargin_xy_.push_back(intramargin_xy);
+}
 
 ClassImp(Picture);

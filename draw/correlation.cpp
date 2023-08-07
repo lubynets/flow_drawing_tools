@@ -61,10 +61,10 @@ void Correlation::RefreshPoints() {
   }
 #endif
   if(points_ == nullptr) {
-    if(draw_errors_as_mean_.first == false) {
+    if(draw_errors_as_mean_.test(0) == 0) {
       points_ = Qn::ToTGraph( average_ );
     } else {
-      points_ = ErrorsToTGraph(average_, draw_errors_as_mean_.second);
+      points_ = ErrorsToTGraph(average_, bool(draw_errors_as_mean_.test(1)));
     }
   }
   for( int i=0; i<points_->GetN(); ++i ){
@@ -151,6 +151,11 @@ void Correlation::DivideValueByError() {
     points_->SetPointY(ip, y/ey);
     points_->SetPointError(ip, 0., 0.);
   }
+}
+
+void Correlation::SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N ) {
+  if(is_draw == true) draw_errors_as_mean_.set(0);
+  if(multiply_by_sqrt_N == true) draw_errors_as_mean_.set(1);
 }
 
 #ifdef DiscriminatorMode

@@ -61,7 +61,9 @@ public:
     Picture::draw_zero_line = draw_zero_line;
   }
   void SetAutoLegend(bool auto_legend) { auto_legend_ = auto_legend; }
-  void AddText( TLatex text, float size=0.04 ){ texts_.push_back(new TLatex(text)); text_sizes_.push_back(size); }
+  void AddText( TLatex text, float size=0.04 );
+  void AddText( std::string text, float size=0.04, std::pair<float, float> intramargin_xy={0.03, 0.92} );
+  std::vector<TLatex*> GetTexts() const { return texts_; }
   void AddLegend( TLegend* legend ){ legends_.push_back( legend ); auto_legend_=false; }
   void AddFunction( TF1* function ){ functions_.push_back(function); }
   void SetLogY(bool is_log_y=true) { Picture::is_log_y = is_log_y; }
@@ -88,14 +90,14 @@ public:
 protected:
   
   bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
-  std::vector<float> TransformToUser(TCanvas* c, std::vector<float> x) const;
+  std::vector<float> TransformToUser(std::vector<float> x) const;
   bool OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const;
   std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;  
   
   std::string name_;
   std::array<int, 2> resolution_;
-  TCanvas* canvas_;
-  TMultiGraph* stack_;
+  TCanvas* canvas_{nullptr};
+  TMultiGraph* stack_{nullptr};
   std::vector<TF1*> functions_;
   std::vector<std::string> axis_titles_;
   std::vector<TF1*> horizontal_lines_;
@@ -104,6 +106,7 @@ protected:
   std::array<float, 2> y_range_;
   std::vector<TLatex*> texts_;
   std::vector<float> text_sizes_;
+  std::vector<std::pair<float, float>> text_intramargin_xy_;
   std::vector<TLegend*> legends_;
   bool is_log_y{false};
   bool is_log_x{false};
