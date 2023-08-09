@@ -89,7 +89,7 @@ void HeapPicture::SetAxisTitles(const std::vector<std::string> &axis_titles) {
 
 void HeapPicture::FillStackWithDrawableObjects() {
   // clear stack_ if it was by chance already filled
-  if(stack_->GetListOfGraphs() != nullptr) {
+  if(stack_ != nullptr && stack_->GetListOfGraphs() != nullptr) {
     for(int iGr=0; iGr<stack_->GetListOfGraphs()->GetEntries(); iGr++) {
       stack_->RecursiveRemove(stack_->GetListOfGraphs()->At(iGr));
     }

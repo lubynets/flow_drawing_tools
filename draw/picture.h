@@ -85,7 +85,10 @@ public:
     this->SetGridX();
     this->SetGridY();
   }
-  
+
+  void ManageTexts(float value, const std::string& option, int id=-1);
+  void ManageGraphs(float x, const std::string& option, int id=-1);
+  void ManageLegends(float x, const std::string& option, int id=-1);
 
 protected:
   

@@ -117,4 +117,57 @@ void Picture::AddText( std::string text, float size, std::pair<float, float> int
   text_intramargin_xy_.push_back(intramargin_xy);
 }
 
+void Picture::ManageTexts(float value, const std::string& option, int id) {
+  int ii{-1};
+  for(auto& tx : texts_) {
+    ii++;
+    if(id != -1 && ii != id) continue;
+    if(option == "size") tx->SetTextSize(value);
+    else if(option == "font") tx->SetTextFont(value);
+    else {
+      throw std::runtime_error("Picture::ManageTexts() - option \"" + option + "\" is not valid one");
+    }
+  }
+}
+
+void Picture::ManageGraphs(float x, const std::string& option, int id) {
+  if(stack_ == nullptr) {
+    throw std::runtime_error("Picture::ManageGraphs() - Picture::stack_ is a nullptr");
+  }
+  auto log = stack_->GetListOfGraphs();
+  if(log == nullptr) {
+    throw std::runtime_error("Warning: Picture::ManageGraphs() - Picture::stack_->GetListOfGraphs() is a nullptr");
+  }
+  for(int iGr=0; iGr<log->GetEntries(); iGr++) {
+    if(id != -1 && iGr != id) continue;
+    TGraph* gr = (TGraph*)log->At(iGr);
+    if(option == "width") gr->SetLineWidth(x);
+    else if(option == "style") gr->SetLineStyle(x);
+    else {
+      throw std::runtime_error("Picture::ManageGraphs() - option \"" + option + "\" is not valid one");
+    }
+  }
+}
+
+void Picture::ManageLegends(float value, const std::string& option, int id) {
+  int ii{-1};
+  for(auto& leg : legends_) {
+    ii++;
+    if(id != -1 && ii != id) continue;
+    if(option == "size") leg->SetTextSize(value);
+    else if(option == "font") leg->SetTextFont(value);
+    else if(option == "x1") leg->SetX1(value);
+    else if(option == "x1NDC") leg->SetX1NDC(value);
+    else if(option == "y1") leg->SetY1(value);
+    else if(option == "y1NDC") leg->SetY1NDC(value);
+    else if(option == "x2") leg->SetX2(value);
+    else if(option == "x2NDC") leg->SetX2NDC(value);
+    else if(option == "y2") leg->SetY2(value);
+    else if(option == "y2NDC") leg->SetY2NDC(value);
+    else {
+      throw std::runtime_error("Picture::ManageLegends() - option \"" + option + "\" is not valid one");
+    }
+  }
+}
+
 ClassImp(Picture);
