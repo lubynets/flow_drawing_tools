@@ -3,7 +3,10 @@
 //
 
 #include "picture.h"
+
 #include "TLegendEntry.h"
+
+#include <numeric>
 
 Picture::~Picture() {
   for(auto& hl : horizontal_lines_) {
@@ -167,6 +170,31 @@ void Picture::ManageLegends(float value, const std::string& option, int id) {
     else {
       throw std::runtime_error("Picture::ManageLegends() - option \"" + option + "\" is not valid one");
     }
+  }
+}
+
+void Picture::ClearLegends(std::vector<int> vec) {
+  ClearVectorOfObjects(legends_, vec);
+}
+
+void Picture::ClearTexts(std::vector<int> vec) {
+  ClearVectorOfObjects(texts_, vec);
+}
+
+template <typename T>
+void Picture::ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec) {
+  if(vec.size()==1 && vec.at(0) == -1) {
+    vec.resize(voo.size());
+    std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
+  }
+  std::sort(vec.begin(), vec.end(), std::greater<int>()); // sort vector from max to min since erasing is optimal in this way
+  for(auto& vv : vec) {
+    if(vv>=voo.size()) {
+      std::cout << "Warning: Picture::ClearVectorOfObjects() - required element " <<
+                   vv << " to be erased is out of vector's size\n";
+    }
+    delete voo.at(vv);
+    voo.erase(voo.begin() + vv);
   }
 }
 

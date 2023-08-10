@@ -10,9 +10,10 @@
 #include <TAxis.h>
 #include <TObject.h>
 #include <TLegend.h>
+#include <TLatex.h>
+#include <TPad.h>
 
 #include "drawable_object.h"
-#include <TLatex.h>
 #include <utility>
 
 class TLegendEntry;
@@ -34,6 +35,7 @@ public:
   void SetXRange(const std::array<float, 2> &x_range) { x_range_ = x_range; }
   void SetYRange(const std::array<float, 2> &y_range) { y_range_ = y_range; }
   virtual void Draw() {};
+  virtual void DrawPad(TVirtualPad* pad = nullptr) {};
   void Save( const std::string& type ){
     assert(canvas_);
     auto save_name = name_+"."+type;
@@ -86,16 +88,23 @@ public:
     this->SetGridY();
   }
 
+  std::pair<float, float> GetXRange() const { return std::make_pair(x_range_.at(0), x_range_.at(1)); }
+  std::pair<float, float> GetYRange() const { return std::make_pair(y_range_.at(0), y_range_.at(1)); }
+
   void ManageTexts(float value, const std::string& option, int id=-1);
   void ManageGraphs(float x, const std::string& option, int id=-1);
   void ManageLegends(float x, const std::string& option, int id=-1);
+  void ClearLegends(std::vector<int> vec={-1});
+  void ClearTexts(std::vector<int> vec={-1});
 
 protected:
   
   bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
   std::vector<float> TransformToUser(std::vector<float> x) const;
   bool OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const;
-  std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;  
+  std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;
+  template <typename T>
+  void ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec={-1});
   
   std::string name_;
   std::array<int, 2> resolution_;
