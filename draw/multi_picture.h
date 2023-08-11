@@ -62,6 +62,7 @@ protected:
   void EqualizeXaxisRanges(int i=-1);
   void EqualizeYaxisRanges(int j=-1);
   void CheckAxesRangesCorrectness();
+  void ApplyAxesRanges();
 
   ClassDefOverride(MultiPicture, 1)
 };

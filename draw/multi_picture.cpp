@@ -34,6 +34,7 @@ void MultiPicture::Draw() {
   if(is_equalize_x_ranges_ == true) EqualizeXaxisRanges();
   if(is_equalize_y_ranges_ == true) EqualizeYaxisRanges();
   CheckAxesRangesCorrectness();
+  ApplyAxesRanges();
 
   for(int ix=0; ix<nx_; ix++) {
     for(int jy=0; jy<ny_; jy++) {
@@ -128,6 +129,16 @@ void MultiPicture::CheckAxesRangesCorrectness() {
       std::cout << "MultiPicture::CheckAxesRangesCorrectness() failed - y lower range exceeds upper one\n";
       std::cout << "y lower = " << yar.first << "\ty higher = " << yar.second << "\n";
       throw;
+    }
+  }
+}
+
+void MultiPicture::ApplyAxesRanges() {
+  for(int i=0; i<nx_; i++) {
+    for(int j=0; j<ny_; j++) {
+      const int k = TransformCoordinates(i, j);
+      pictures_.at(k)->SetXRange({x_axis_ranges_.at(i).first, x_axis_ranges_.at(i).second});
+      pictures_.at(k)->SetYRange({y_axis_ranges_.at(j).first, y_axis_ranges_.at(j).second});
     }
   }
 }

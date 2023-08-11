@@ -32,5 +32,7 @@ gStyle->SetTitleOffset(2.0, "X");
 gStyle->SetTitleOffset(3.5, "Y");
 gStyle->SetTitleOffset(0.05, "Z");
 
+gStyle->SetNdivisions(508, "Y");
+
 gStyle->SetOptStat(0);
 }
