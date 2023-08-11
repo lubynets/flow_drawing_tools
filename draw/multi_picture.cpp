@@ -1,5 +1,7 @@
 #include "multi_picture.h"
 
+ClassImp(MultiPicture)
+
 MultiPicture::MultiPicture(int nx, int ny) {
   nx_ = nx;
   ny_ = ny;
@@ -26,7 +28,8 @@ MultiPicture::~MultiPicture() {
 }
 
 void MultiPicture::Draw() {
-  canvas_ = new TCanvas("cc", "", canvas_x_, canvas_y_);
+  std::cout << "INFO: MultiPicture::Draw() started\n";
+  canvas_ = new TCanvas("cc", "cc", canvas_x_, canvas_y_);
   CreatePads();
   if(is_equalize_x_ranges_ == true) EqualizeXaxisRanges();
   if(is_equalize_y_ranges_ == true) EqualizeYaxisRanges();
@@ -36,7 +39,7 @@ void MultiPicture::Draw() {
     for(int jy=0; jy<ny_; jy++) {
       const int kk = TransformCoordinates(ix, jy);
       if(picture_is_inited_.at(kk) == false) continue;
-      canvas_->cd();
+      canvas_->cd(0);
       pads_.at(kk)->Draw();
       pads_.at(kk)->SetFillStyle(4000);
       pads_.at(kk)->SetFrameFillStyle(4000);
@@ -44,6 +47,7 @@ void MultiPicture::Draw() {
       pictures_.at(kk)->DrawPad(pads_.at(kk));
     }
   }
+  std::cout << "INFO: MultiPicture::Draw() finished\n";
 }
 
 void MultiPicture::SetPicture(int i, int j, Picture* pic) {
@@ -82,6 +86,7 @@ void MultiPicture::EqualizeXaxisRanges(int i) {
     for(int ii=0; ii<nx_; ii++) {
       EqualizeXaxisRanges(ii);
     }
+    return;
   }
   for(int j=0; j<ny_; j++) {
     const int k = TransformCoordinates(i, j);
@@ -96,9 +101,10 @@ void MultiPicture::EqualizeYaxisRanges(int j) {
  // j - number of raw where automatize
  // j==-1 means to automatize in each raw
   if(j<0) {
-    for(int jj=0; jj<nx_; jj++) {
-      EqualizeXaxisRanges(jj);
+    for(int jj=0; jj<ny_; jj++) {
+      EqualizeYaxisRanges(jj);
     }
+    return;
   }
   for(int i=0; i<nx_; i++) {
     const int k = TransformCoordinates(i, j);
@@ -112,12 +118,16 @@ void MultiPicture::EqualizeYaxisRanges(int j) {
 void MultiPicture::CheckAxesRangesCorrectness() {
   for(auto& xar : x_axis_ranges_) {
     if(xar.first >= xar.second) {
-      throw std::runtime_error("MultiPicture::CheckAxesRangesCorrectness() failed - lower range exceeds upper one");
+      std::cout << "MultiPicture::CheckAxesRangesCorrectness() failed - x lower range exceeds upper one\n";
+      std::cout << "x lower = " << xar.first << "\tx higher = " << xar.second << "\n";
+      throw;
     }
   }
   for(auto& yar : y_axis_ranges_) {
     if(yar.first >= yar.second) {
-      throw std::runtime_error("MultiPicture::CheckAxesRangesCorrectness() failed - lower range exceeds upper one");
+      std::cout << "MultiPicture::CheckAxesRangesCorrectness() failed - y lower range exceeds upper one\n";
+      std::cout << "y lower = " << yar.first << "\ty higher = " << yar.second << "\n";
+      throw;
     }
   }
 }
@@ -145,6 +155,8 @@ std::pair<int, int> MultiPicture::TransformCoordinates(int k) const {
 }
 
 void MultiPicture::CreatePads() {
+  std::cout << "INFO: MultiPicture::CreatePads() started\n";
+
   // borrowed from Root tutorials/graphics/canvas2.C
   float vStep  = (1.- bMargin_ - tMargin_ - (ny_-1) * vSpacing_) / ny_;
   float hStep  = (1.- lMargin_ - rMargin_ - (nx_-1) * hSpacing_) / nx_;
@@ -202,4 +214,5 @@ void MultiPicture::CreatePads() {
       pads_.at(k)->Draw();
     }
   }
+  std::cout << "INFO: MultiPicture::CreatePads() finished\n";
 }

@@ -14,6 +14,7 @@ public:
   void SetPicture(int i, int j, Picture* pic);
   std::vector<Picture*>& GetPictures() { return pictures_; }
   Picture* GetPicture(int i, int j) const;
+  TCanvas* GetCanvas() const { return canvas_; }
 
   void SetXaxisRanges(int i, float lo, float hi);
   void SetYaxisRanges(int j, float lo, float hi);
@@ -61,6 +62,8 @@ protected:
   void EqualizeXaxisRanges(int i=-1);
   void EqualizeYaxisRanges(int j=-1);
   void CheckAxesRangesCorrectness();
+
+  ClassDefOverride(MultiPicture, 1)
 };
 
 
