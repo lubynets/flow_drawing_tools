@@ -3,7 +3,10 @@
 //
 
 #include "picture.h"
+
 #include "TLegendEntry.h"
+
+#include <numeric>
 
 Picture::~Picture() {
   for(auto& hl : horizontal_lines_) {
@@ -51,7 +54,7 @@ bool Picture::OverlapRectangles(std::vector<float> rect1, std::vector<float> rec
   return true;
 }
 
-std::vector<float> Picture::TransformToUser(TCanvas* canvas, std::vector<float> x) const {
+std::vector<float> Picture::TransformToUser(std::vector<float> x) const {
   // Transforms from Pad coordinates to User coordinates.
   // This can probably be replaced by using the built-in conversion commands.
 
@@ -59,20 +62,12 @@ std::vector<float> Picture::TransformToUser(TCanvas* canvas, std::vector<float> 
   const float xlength = x_range_.at(1) - xstart;
   float xlow = xlength * x.at(kX1) + xstart;
   float xhigh = xlength * x.at(kX2) + xstart;
-//   if (canvas->GetLogx()) {
-//     xlow = std::pow(10, xlow);
-//     xhigh = std::pow(10, xhigh);
-//   }
 
   const float ystart = y_range_.at(0);
   const float ylength = y_range_.at(1) - ystart;
   float ylow = ylength * x.at(kY1) + ystart;
   float yhigh = ylength * x.at(kY2) + ystart;
-//   if (canvas->GetLogy()) {
-//     ylow = std::pow(10, ylow);
-//     yhigh = std::pow(10, yhigh);
-//   }
-     
+
   return {xlow, ylow, xhigh, yhigh};
 }
 
@@ -113,5 +108,94 @@ void Picture::AddHorizontalLine(float value) {
   horizontal_lines_.back()->SetParameter(0, value);
 }
 
+void Picture::AddText( TLatex text, float size) {
+  texts_.push_back(new TLatex(text));
+  text_sizes_.push_back(size);
+  text_intramargin_xy_.push_back(std::make_pair(-1., -1.));
+}
+
+void Picture::AddText( std::string text, float size, std::pair<float, float> intramargin_xy ) {
+  texts_.push_back(new TLatex({0., 0., text.c_str()}));
+  text_sizes_.push_back(size);
+  text_intramargin_xy_.push_back(intramargin_xy);
+}
+
+void Picture::ManageTexts(float value, const std::string& option, int id) {
+  int ii{-1};
+  for(auto& tx : texts_) {
+    ii++;
+    if(id != -1 && ii != id) continue;
+    if(option == "size") tx->SetTextSize(value);
+    else if(option == "font") tx->SetTextFont(value);
+    else {
+      throw std::runtime_error("Picture::ManageTexts() - option \"" + option + "\" is not valid one");
+    }
+  }
+}
+
+void Picture::ManageGraphs(float x, const std::string& option, int id) {
+  if(stack_ == nullptr) {
+    throw std::runtime_error("Picture::ManageGraphs() - Picture::stack_ is a nullptr");
+  }
+  auto log = stack_->GetListOfGraphs();
+  if(log == nullptr) {
+    throw std::runtime_error("Warning: Picture::ManageGraphs() - Picture::stack_->GetListOfGraphs() is a nullptr");
+  }
+  for(int iGr=0; iGr<log->GetEntries(); iGr++) {
+    if(id != -1 && iGr != id) continue;
+    TGraph* gr = (TGraph*)log->At(iGr);
+    if(option == "width") gr->SetLineWidth(x);
+    else if(option == "style") gr->SetLineStyle(x);
+    else {
+      throw std::runtime_error("Picture::ManageGraphs() - option \"" + option + "\" is not valid one");
+    }
+  }
+}
+
+void Picture::ManageLegends(float value, const std::string& option, int id) {
+  int ii{-1};
+  for(auto& leg : legends_) {
+    ii++;
+    if(id != -1 && ii != id) continue;
+    if(option == "size") leg->SetTextSize(value);
+    else if(option == "font") leg->SetTextFont(value);
+    else if(option == "x1") leg->SetX1(value);
+    else if(option == "x1NDC") leg->SetX1NDC(value);
+    else if(option == "y1") leg->SetY1(value);
+    else if(option == "y1NDC") leg->SetY1NDC(value);
+    else if(option == "x2") leg->SetX2(value);
+    else if(option == "x2NDC") leg->SetX2NDC(value);
+    else if(option == "y2") leg->SetY2(value);
+    else if(option == "y2NDC") leg->SetY2NDC(value);
+    else {
+      throw std::runtime_error("Picture::ManageLegends() - option \"" + option + "\" is not valid one");
+    }
+  }
+}
+
+void Picture::ClearLegends(std::vector<int> vec) {
+  ClearVectorOfObjects(legends_, vec);
+}
+
+void Picture::ClearTexts(std::vector<int> vec) {
+  ClearVectorOfObjects(texts_, vec);
+}
+
+template <typename T>
+void Picture::ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec) {
+  if(vec.size()==1 && vec.at(0) == -1) {
+    vec.resize(voo.size());
+    std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
+  }
+  std::sort(vec.begin(), vec.end(), std::greater<int>()); // sort vector from max to min since erasing is optimal in this way
+  for(auto& vv : vec) {
+    if(vv>=voo.size()) {
+      std::cout << "Warning: Picture::ClearVectorOfObjects() - required element " <<
+                   vv << " to be erased is out of vector's size\n";
+    }
+    delete voo.at(vv);
+    voo.erase(voo.begin() + vv);
+  }
+}
 
 ClassImp(Picture);

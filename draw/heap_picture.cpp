@@ -7,34 +7,19 @@
 ClassImp(HeapPicture)
 
 void HeapPicture::Draw() {
+  DrawPad();
+}
+
+void HeapPicture::DrawPad(TVirtualPad* pad) {
+  if(pad == nullptr){
+    pad = canvas_->GetPad(0);
+  }
+  pad->cd();
   if(auto_legend_){
     assert(legends_.empty());
     legends_.emplace_back( new TLegend() );
   }
-  for( auto obj : drawable_objects_ ){
-    if( obj->IsLine() ) {
-      std::string opt;
-      if(obj->IsFillLine()) {
-        opt = "E3" + obj->GetErrorOption();
-        if(obj->GetPoints()->GetLineStyle() == 2) obj->GetPoints()->SetFillStyle(3244);
-      } else {
-        opt = "L+X+" + obj->GetErrorOption();
-      }
-      stack_->Add(obj->GetPoints(), opt.c_str());
-      if( auto_legend_ )
-        legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
-      if( obj->GetSysErrorPoints() )
-        stack_->Add( obj->GetSysErrorPoints(), "L+2" );
-    } else {
-      std::string opt{"P+" + obj->GetErrorOption()};
-      stack_->Add(obj->GetPoints(), opt.c_str());
-      if( auto_legend_ )
-        legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");
-      if( obj->GetSysErrorPoints() )
-        stack_->Add( obj->GetSysErrorPoints(), "P+2" );
-    }
-  }
-  canvas_->cd();
+  FillStackWithDrawableObjects();
   if( is_log_x )
     gPad->SetLogx();
   if( is_log_y )
@@ -67,11 +52,9 @@ void HeapPicture::Draw() {
     for(auto& hl : horizontal_lines_) {
       hl->SetRange(x_range_.at(0), x_range_.at(1));
     }
-//     stack_->Draw();
   }
   if( y_range_.at(0) < y_range_.at(1) ) {
     stack_->GetYaxis()->SetRangeUser(y_range_.at(0), y_range_.at(1));
-//     stack_->Draw();
   }
   if( draw_zero_line )
     horizontal_lines_.at(0)->Draw("same");
@@ -82,13 +65,18 @@ void HeapPicture::Draw() {
   for( auto text : texts_ ){
     text->SetNDC();
     text->SetTextSize(text_sizes_.at(i));
-//    text->SetLineWidth(1);
-//    text.SetLineColor(kBlack);
+    if(text_intramargin_xy_.at(i).first != -1) {
+      const float xNDC = pad->GetLeftMargin() + text_intramargin_xy_.at(i).first * (1. - pad->GetRightMargin() - pad->GetLeftMargin());
+      const float yNDC = pad->GetBottomMargin() + text_intramargin_xy_.at(i).second * (1. - pad->GetTopMargin() - pad->GetBottomMargin());
+      texts_.at(i)->SetX(xNDC);
+      texts_.at(i)->SetY(yNDC);
+    }
     text->Draw("same");
     ++i;
   }
   for(auto legend : legends_) {
     assert(legend);
+    CustomizeLegend(legend);
     legend->Draw("same");
   }
 }
@@ -97,6 +85,39 @@ void HeapPicture::SetAxisTitles(const std::vector<std::string> &axis_titles) {
   axis_titles_ = axis_titles;
   auto title = ";"+axis_titles.at(0)+";"+axis_titles.at(1);
   stack_->SetTitle( title.c_str() );
+}
+
+void HeapPicture::FillStackWithDrawableObjects() {
+  // clear stack_ if it was by chance already filled
+  if(stack_ != nullptr && stack_->GetListOfGraphs() != nullptr) {
+    for(int iGr=iGr=stack_->GetListOfGraphs()->GetEntries()-1; iGr>=0; iGr--) {
+      stack_->RecursiveRemove(stack_->GetListOfGraphs()->At(iGr));
+    }
+  }
+
+  for( auto obj : drawable_objects_ ){
+    if( obj->IsLine() ) {
+      std::string opt;
+      if(obj->IsFillLine()) {
+        opt = "E3" + obj->GetErrorOption();
+        if(obj->GetPoints()->GetLineStyle() == 2) obj->GetPoints()->SetFillStyle(3244);
+      } else {
+        opt = "L+X+" + obj->GetErrorOption();
+      }
+      stack_->Add(obj->GetPoints(), opt.c_str());
+      if( auto_legend_ )
+        legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
+      if( obj->GetSysErrorPoints() )
+        stack_->Add( obj->GetSysErrorPoints(), "L+2" );
+    } else {
+      std::string opt{"P+" + obj->GetErrorOption()};
+      stack_->Add(obj->GetPoints(), opt.c_str());
+      if( auto_legend_ )
+        legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");
+      if( obj->GetSysErrorPoints() )
+        stack_->Add( obj->GetSysErrorPoints(), "P+2" );
+    }
+  }
 }
 
 void HeapPicture::CustomizeLegend(TLegend* leg) {
@@ -187,7 +208,7 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
   
   for(auto& pl : places) {
     bool is_good_place = true;
-    std::vector<float> place_user = TransformToUser(canvas_, pl);
+    std::vector<float> place_user = TransformToUser(pl);
     for(auto& drob : drawable_objects_) {
       TGraph* gr = (TGraph*)drob->GetPoints();
       if(OverlapWithGraph(gr, place_user)) {
@@ -205,7 +226,7 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
       return;
     }
   }
-    std::vector<float> place_user = TransformToUser(canvas_, places.at(0));
+    std::vector<float> place_user = TransformToUser(places.at(0));
     leg -> SetX1(place_user.at(kX1));
     leg -> SetY1(place_user.at(kY1));
     leg -> SetX2(place_user.at(kX2));
