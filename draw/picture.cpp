@@ -108,23 +108,27 @@ void Picture::AddHorizontalLine(float value) {
   horizontal_lines_.back()->SetParameter(0, value);
 }
 
-void Picture::AddText( TLatex text, float size) {
+void Picture::AddText( TLatex text, float size, int font) {
   texts_.push_back(new TLatex(text));
   text_sizes_.push_back(size);
+  text_fonts_.push_back(font);
   text_intramargin_xy_.push_back(std::make_pair(-1., -1.));
 }
 
-void Picture::AddText( std::string text, float size, std::pair<float, float> intramargin_xy ) {
+void Picture::AddText( std::string text, std::pair<float, float> intramargin_xy, float size, int font ) {
   texts_.push_back(new TLatex({0., 0., text.c_str()}));
   text_sizes_.push_back(size);
+  text_fonts_.push_back(font);
   text_intramargin_xy_.push_back(intramargin_xy);
 }
 
-void Picture::ManageTexts(float value, const std::string& option, int id) {
-  int ii{-1};
-  for(auto& tx : texts_) {
-    ii++;
-    if(id != -1 && ii != id) continue;
+void Picture::ManageTexts(float value, const std::string& option, std::vector<int> vec) {
+  if(vec.size()==1 && vec.at(0) == -1) {
+    vec.resize(texts_.size());
+    std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
+  }
+  for(auto& vv : vec) {
+    auto tx = texts_.at(vv);
     if(option == "size") tx->SetTextSize(value);
     else if(option == "font") tx->SetTextFont(value);
     else {
@@ -133,7 +137,7 @@ void Picture::ManageTexts(float value, const std::string& option, int id) {
   }
 }
 
-void Picture::ManageGraphs(float x, const std::string& option, int id) {
+void Picture::ManageGraphs(float x, const std::string& option, std::vector<int> vec) {
   if(stack_ == nullptr) {
     throw std::runtime_error("Picture::ManageGraphs() - Picture::stack_ is a nullptr");
   }
@@ -141,22 +145,29 @@ void Picture::ManageGraphs(float x, const std::string& option, int id) {
   if(log == nullptr) {
     throw std::runtime_error("Warning: Picture::ManageGraphs() - Picture::stack_->GetListOfGraphs() is a nullptr");
   }
-  for(int iGr=0; iGr<log->GetEntries(); iGr++) {
-    if(id != -1 && iGr != id) continue;
-    TGraph* gr = (TGraph*)log->At(iGr);
+  if(vec.size()==1 && vec.at(0) == -1) {
+    vec.resize(stack_->GetListOfGraphs()->GetEntries());
+    std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
+  }
+  for(auto& vv : vec) {
+    TGraph* gr = (TGraph*)log->At(vv);
     if(option == "width") gr->SetLineWidth(x);
     else if(option == "style") gr->SetLineStyle(x);
+    else if(option == "markersize") gr->SetMarkerSize(x);
     else {
       throw std::runtime_error("Picture::ManageGraphs() - option \"" + option + "\" is not valid one");
     }
   }
 }
 
-void Picture::ManageLegends(float value, const std::string& option, int id) {
-  int ii{-1};
-  for(auto& leg : legends_) {
-    ii++;
-    if(id != -1 && ii != id) continue;
+void Picture::ManageLegends(float value, const std::string& option, std::vector<int> vec) {
+  // Picture::ManageLegends() with option == "markersize" over-writes ManageGraphs with the same option
+  if(vec.size()==1 && vec.at(0) == -1) {
+    vec.resize(legends_.size());
+    std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
+  }
+  for(auto& vv : vec) {
+    auto leg = legends_.at(vv);
     if(option == "size") leg->SetTextSize(value);
     else if(option == "font") leg->SetTextFont(value);
     else if(option == "x1") leg->SetX1(value);
@@ -167,6 +178,20 @@ void Picture::ManageLegends(float value, const std::string& option, int id) {
     else if(option == "x2NDC") leg->SetX2NDC(value);
     else if(option == "y2") leg->SetY2(value);
     else if(option == "y2NDC") leg->SetY2NDC(value);
+    else if(option == "markersize") {
+      TList* lop = leg->GetListOfPrimitives();
+      for(int iP=0; iP<lop->GetEntries(); iP++) {
+        TLegendEntry* lentry = (TLegendEntry*)lop->At(iP);
+        auto obj = lentry->GetObject();
+        if(obj->ClassName() == (TString)"TGraph" || obj->ClassName() == (TString)"TGraphErrors") {
+          TGraph* gr = (TGraph*)obj;
+          gr->SetMarkerSize(value);
+        } else if(obj->ClassName() == (TString)"TLegendEntry") {
+          TLegendEntry* le = (TLegendEntry*)obj;
+          le->SetMarkerSize(value);
+        }
+      }
+    }
     else {
       throw std::runtime_error("Picture::ManageLegends() - option \"" + option + "\" is not valid one");
     }
@@ -196,6 +221,30 @@ void Picture::ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec) {
     delete voo.at(vv);
     voo.erase(voo.begin() + vv);
   }
+}
+
+void Picture::ScaleGraphs(float factor, std::vector<int> vec) {
+  if(stack_ == nullptr) {
+    throw std::runtime_error("Picture::ScaleGraphs() - Picture::stack_ is a nullptr");
+  }
+  auto log = stack_->GetListOfGraphs();
+  if(log == nullptr) {
+    throw std::runtime_error("Warning: Picture::ScaleGraphs() - Picture::stack_->GetListOfGraphs() is a nullptr");
+  }
+  if(vec.size()==1 && vec.at(0) == -1) {
+    vec.resize(stack_->GetListOfGraphs()->GetEntries());
+    std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
+  }
+  for(auto& vv : vec) {
+    TGraphErrors* gr = (TGraphErrors*)log->At(vv);
+    for(int iP=0; iP<gr->GetN(); iP++) {
+      gr->GetY()[iP] *= factor;
+      gr->GetEY()[iP] *= factor;
+    }
+  }
+  ymax_ *= factor; //TODO what if scale not all graphs?
+  ymin_ *= factor;
+  CustomizeYRange();
 }
 
 ClassImp(Picture);

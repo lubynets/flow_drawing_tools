@@ -9,7 +9,7 @@ public:
 
   MultiPicture() = delete;
   MultiPicture(int nx, int ny);
-  ~MultiPicture();
+  ~MultiPicture() override;
 
   void SetPicture(int i, int j, Picture* pic);
   std::vector<Picture*>& GetPictures() { return pictures_; }

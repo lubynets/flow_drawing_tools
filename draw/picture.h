@@ -63,8 +63,8 @@ public:
     Picture::draw_zero_line = draw_zero_line;
   }
   void SetAutoLegend(bool auto_legend) { auto_legend_ = auto_legend; }
-  void AddText( TLatex text, float size=0.04 );
-  void AddText( std::string text, float size=0.04, std::pair<float, float> intramargin_xy={0.03, 0.92} );
+  void AddText( TLatex text, float size=0.04, int font=62 );
+  void AddText( std::string text, std::pair<float, float> intramargin_xy={0.03, 0.92}, float size=0.04, int font=62 );
   std::vector<TLatex*> GetTexts() const { return texts_; }
   void AddLegend( TLegend* legend ){ legends_.push_back( legend ); auto_legend_=false; }
   void AddFunction( TF1* function ){ functions_.push_back(function); }
@@ -91,11 +91,12 @@ public:
   std::pair<float, float> GetXRange() const { return std::make_pair(x_range_.at(0), x_range_.at(1)); }
   std::pair<float, float> GetYRange() const { return std::make_pair(y_range_.at(0), y_range_.at(1)); }
 
-  void ManageTexts(float value, const std::string& option, int id=-1);
-  void ManageGraphs(float x, const std::string& option, int id=-1);
-  void ManageLegends(float x, const std::string& option, int id=-1);
+  void ManageTexts(float value, const std::string& option, std::vector<int> vec={-1});
+  void ManageGraphs(float x, const std::string& option, std::vector<int> vec={-1});
+  void ManageLegends(float x, const std::string& option, std::vector<int> vec={-1});
   void ClearLegends(std::vector<int> vec={-1});
   void ClearTexts(std::vector<int> vec={-1});
+  void ScaleGraphs(float factor, std::vector<int> vec={-1});
 
 protected:
   
@@ -118,6 +119,7 @@ protected:
   std::array<float, 2> y_range_;
   std::vector<TLatex*> texts_;
   std::vector<float> text_sizes_;
+  std::vector<int> text_fonts_{};
   std::vector<std::pair<float, float>> text_intramargin_xy_;
   std::vector<TLegend*> legends_;
   bool is_log_y{false};

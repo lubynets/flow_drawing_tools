@@ -82,3 +82,37 @@ target_link_libraries(Draw PRIVATE QnTools::Base ${ROOT_LIBRARIES})
 
 add_executable(draw_picture draw/draw_picture.cpp)
 target_link_libraries(draw_picture QnTools::Base ${ROOT_LIBRARIES} Draw )
+
+install(TARGETS Draw EXPORT DrawTargets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include
+        )
+
+install(
+        FILES
+        ${HEADERS}
+        DESTINATION
+        include
+        COMPONENT
+        Devel
+)
+
+install(
+        FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/${PCM_FILE_NAME}_rdict.pcm"
+        DESTINATION
+        lib
+        OPTIONAL
+)
+
+install(
+        FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/${PCM_FILE_NAME}.rootmap"
+        DESTINATION
+        lib
+        OPTIONAL
+)
+
+install (TARGETS draw_picture RUNTIME DESTINATION bin)

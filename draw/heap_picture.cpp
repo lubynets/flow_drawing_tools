@@ -65,6 +65,7 @@ void HeapPicture::DrawPad(TVirtualPad* pad) {
   for( auto text : texts_ ){
     text->SetNDC();
     text->SetTextSize(text_sizes_.at(i));
+    text->SetTextFont(text_fonts_.at(i));
     if(text_intramargin_xy_.at(i).first != -1) {
       const float xNDC = pad->GetLeftMargin() + text_intramargin_xy_.at(i).first * (1. - pad->GetRightMargin() - pad->GetLeftMargin());
       const float yNDC = pad->GetBottomMargin() + text_intramargin_xy_.at(i).second * (1. - pad->GetTopMargin() - pad->GetBottomMargin());

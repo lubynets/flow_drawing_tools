@@ -9,7 +9,7 @@ gStyle->SetPadBottomMargin(0.1);
 gStyle->SetPadTopMargin(0.05);
 gStyle->SetLegendBorderSize(0);
 gStyle->SetFrameLineWidth(2);
-gStyle->SetMarkerSize(2);
+gStyle->SetMarkerSize(1.4);
 gStyle->SetLineWidth(2);
 
 gStyle->SetTextFont(23);
