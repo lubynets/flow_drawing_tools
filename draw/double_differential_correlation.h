@@ -114,19 +114,7 @@ protected:
   bool is_fill_line_{false};
   float shift_projection_axis_{0.f};
   std::pair<float, float> slight_shift_projection_axis_{0.f, 0.f};
-  std::vector<int> palette_{
-      kPink,
-      kMagenta+1,
-      kViolet-8,
-      kBlue,
-      kAzure-4,
-      kCyan+1,
-      kGreen+2,
-      kSpring-4,
-      kYellow-3,
-      kOrange-3,
-      kRed,
-  };
+  std::vector<int> palette_{};
   bool bias_palette_{false};
   std::pair<bool, bool> draw_errors_as_mean_{false, false};  // first: draw error or not; second: if draw - multiply by sqrt(Neff) or not
   Qn::Stat::ErrorType error_type_{Qn::Stat::ErrorType::BOOTSTRAP};

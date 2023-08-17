@@ -54,11 +54,7 @@ public:
       container = container*num;
   }
   friend Correlation operator/( const Correlation& num, const Correlation& den);
-  void SetCalculateSystematicsFromVariation(
-      bool calculate_systematics_from_variation = true) {
-    calculate_systematics_from_variation_ =
-        calculate_systematics_from_variation;
-  }
+  void SetCalculateSystematicsFromVariation( bool is = true) { calculate_systematics_from_variation_ = is; }
 
   friend Correlation Plus(const Correlation& lhs, const Correlation& rhs);
   friend Correlation Minus(const Correlation& lhs, const Correlation& rhs);

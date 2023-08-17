@@ -148,15 +148,6 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
       places.push_back({x_start, y_start, x_stop, y_stop});
     }
   
-//   for(int i=1; i<=Nspaces; i++)  // top left
-//     for(int j=1; j<=Nspaces; j++) {
-//       const float x_start = zero + i*leftspace;
-//       const float y_stop = one - j*topspace;
-//       const float x_stop = x_start + width;
-//       const float y_start = y_stop - height;
-//       places.push_back({x_start, y_start, x_stop, y_stop});
-//     }
-  
   for(int j=1; j<=Nspaces; j++) { // top
     const float x_stop = middle + width/2;
     const float y_stop = one - j*topspace;
