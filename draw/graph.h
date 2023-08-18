@@ -18,6 +18,7 @@ public:
   void RecalculateXaxis( const std::vector<double>& x_axis );
   void ShiftXaxis( const float value );
   void SetPoints( TGraphErrors* graph ){ points_ = graph; }
+  void SetSysErrorPoints( TGraphErrors* graph ){ sys_error_points_ = graph; }
   ClassDefOverride(Graph, 1)
 };
 

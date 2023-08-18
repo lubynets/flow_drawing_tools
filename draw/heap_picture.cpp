@@ -116,7 +116,7 @@ void HeapPicture::FillStackWithDrawableObjects() {
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");
       if( obj->GetSysErrorPoints() )
-        stack_->Add( obj->GetSysErrorPoints(), "P+2" );
+        stack_->Add( obj->GetSysErrorPoints(), "P+5" );
     }
   }
 }

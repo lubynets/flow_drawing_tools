@@ -63,6 +63,7 @@ void Graph::ShiftXaxis( const float value ){
   for(int i=0; i<points_->GetN(); i++){
     auto x = points_->GetPointX(i);
     points_->SetPointX(i, x+value);
+    if(sys_error_points_!=nullptr) sys_error_points_->SetPointX(i, x+value);
   }
 }
 
