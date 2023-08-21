@@ -102,7 +102,7 @@ protected:
   
   bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
   std::vector<float> TransformToUser(std::vector<float> x) const;
-  bool OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const;
+  bool OverlapWithGraph(TGraphMultiErrors* graph, std::vector<float> rect2) const;
   std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;
   template <typename T>
   void ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec={-1});

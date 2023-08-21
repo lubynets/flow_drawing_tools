@@ -71,7 +71,7 @@ std::vector<float> Picture::TransformToUser(std::vector<float> x) const {
   return {xlow, ylow, xhigh, yhigh};
 }
 
-bool Picture::OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const {
+bool Picture::OverlapWithGraph(TGraphMultiErrors* graph, std::vector<float> rect2) const {
   const float y2x = (y_range_.at(1) - y_range_.at(0))/(x_range_.at(1) - x_range_.at(0));
   const double minex = (graph->GetPointX(1)-graph->GetPointX(0))/4.;
   const double miney = minex*y2x;
@@ -80,7 +80,7 @@ bool Picture::OverlapWithGraph(TGraph* graph, std::vector<float> rect2) const {
     const float x = graph->GetPointX(i);
     const float y = graph->GetPointY(i);
     const float ex = std::max(graph->GetErrorX(i), minex);
-    const float ey = std::max(graph->GetErrorY(i), miney);
+    const float ey = std::max(graph->GetErrorY(i, 0), miney);
     
     if(OverlapRectangles(rect2, {x-ex, y-ey, x+ex, y+ey}))
       return true;

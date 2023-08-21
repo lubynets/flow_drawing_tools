@@ -37,7 +37,7 @@ protected:
   std::vector<DrawableObject*> drawable_objects_;
   float relative_error_threshold_{-1.};
 
-  std::pair<float, float> GetYLimits(TGraphErrors* gr);
+  std::pair<float, float> GetYLimits(TGraphMultiErrors* gr) const;
   void FillStackWithDrawableObjects();
 
   ClassDefOverride(HeapPicture, 1)

@@ -58,14 +58,12 @@ set(SOURCES
         draw/double_differential_correlation.cpp
         draw/double_differential_histogram.cpp
         draw/multi_correlation.cpp
-        draw/graph_subtractor.cpp
-        draw/graph_divider.cpp
         draw/multi_picture.cpp
         )
 
 string(REPLACE ".cpp" ".h" HEADERS "${SOURCES}")
 
-list(APPEND HEADERS "draw/QnToolsHelper.h")
+list(APPEND HEADERS "draw/Helper.h" "draw/QnToolsHelper.h")
 
 set(PCM_FILE_NAME libDraw)
 message(STATUS "QnTools include ${QnTools_INCLUDE_DIR}")

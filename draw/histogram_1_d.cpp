@@ -31,13 +31,14 @@ Histogram1D::~Histogram1D() {}
 
 void Histogram1D::RefreshPoints() {
   if( !points_ )
-    points_ = new TGraphErrors( histogram_->GetNbinsX() );
+    points_ = new TGraphMultiErrors( histogram_->GetNbinsX() );
   for( int i=0; i<histogram_->GetNbinsX(); ++i ){
     auto x = histogram_->GetBinCenter(i+1);
     auto y = histogram_->GetBinContent(i+1);
     auto y_err = histogram_->GetBinError(i+1);
     points_->SetPoint(i, x, y);
-    points_->SetPointError(i, 0, y_err);
+    points_->SetPointEX(i, 0., 0.);
+    points_->SetPointEY(i, 0, y_err, y_err);
   }
   this->SetMarkerStyle();
 }

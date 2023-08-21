@@ -91,7 +91,7 @@ void HeapPicture::SetAxisTitles(const std::vector<std::string> &axis_titles) {
 void HeapPicture::FillStackWithDrawableObjects() {
   // clear stack_ if it was by chance already filled
   if(stack_ != nullptr && stack_->GetListOfGraphs() != nullptr) {
-    for(int iGr=iGr=stack_->GetListOfGraphs()->GetEntries()-1; iGr>=0; iGr--) {
+    for(int iGr=stack_->GetListOfGraphs()->GetEntries()-1; iGr>=0; iGr--) {
       stack_->RecursiveRemove(stack_->GetListOfGraphs()->At(iGr));
     }
   }
@@ -108,15 +108,15 @@ void HeapPicture::FillStackWithDrawableObjects() {
       stack_->Add(obj->GetPoints(), opt.c_str());
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
-      if( obj->GetSysErrorPoints() )
-        stack_->Add( obj->GetSysErrorPoints(), "L+2" );
+//      if( obj->GetSysErrorPoints() )
+//        stack_->Add( obj->GetSysErrorPoints(), "L+2" );
     } else {
       std::string opt{"P+" + obj->GetErrorOption()};
       stack_->Add(obj->GetPoints(), opt.c_str());
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");
-      if( obj->GetSysErrorPoints() )
-        stack_->Add( obj->GetSysErrorPoints(), "P+5" );
+//      if( obj->GetSysErrorPoints() )
+//        stack_->Add( obj->GetSysErrorPoints(), "P+5" );
     }
   }
 }
@@ -202,7 +202,7 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
     bool is_good_place = true;
     std::vector<float> place_user = TransformToUser(pl);
     for(auto& drob : drawable_objects_) {
-      TGraph* gr = (TGraph*)drob->GetPoints();
+      TGraphMultiErrors* gr = (TGraphMultiErrors*)drob->GetPoints();
       if(OverlapWithGraph(gr, place_user)) {
         is_good_place = false;
         break;
@@ -226,13 +226,13 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
     leg -> SetOption("br");
 }
 
-std::pair<float, float> HeapPicture::GetYLimits(TGraphErrors* gr) {
+std::pair<float, float> HeapPicture::GetYLimits(TGraphMultiErrors* gr) const {
   float lo = std::numeric_limits<float>::max();
   float hi = std::numeric_limits<float>::min();
 
   for(int i = 0; i<gr->GetN(); i++) {
     const float y = gr->GetPointY(i);
-    const float ey = gr->GetErrorY(i);
+    const float ey = gr->GetErrorY(i, 0);
     const float err = std::abs(ey/y);
     if(err < relative_error_threshold_ || relative_error_threshold_ < 0.) {
       lo = std::min(lo, y-ey);
