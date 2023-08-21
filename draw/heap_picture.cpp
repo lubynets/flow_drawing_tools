@@ -227,8 +227,8 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
 }
 
 std::pair<float, float> HeapPicture::GetYLimits(TGraphMultiErrors* gr) const {
-  float lo = std::numeric_limits<float>::max();
-  float hi = std::numeric_limits<float>::min();
+  float lo =  std::numeric_limits<float>::max();
+  float hi = -std::numeric_limits<float>::max();
 
   for(int i = 0; i<gr->GetN(); i++) {
     const float y = gr->GetPointY(i);

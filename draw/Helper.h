@@ -10,14 +10,14 @@
 namespace Helper {
 
   inline TGraphMultiErrors* TGraphErrorsToTGraphMultiErrors(const TGraphErrors* gre) {
-    auto* grme = new TGraphMultiErrors();
+    auto* grme = new TGraphMultiErrors(gre->GetN(), 1);
     for (int iP = 0; iP < gre->GetN(); iP++) {
       grme->SetPoint(iP, gre->GetPointX(iP), gre->GetPointY(iP));
       const Double_t ex = gre->GetErrorX(iP);
-      auto ey = new Double_t[1];
-      ey[0] = gre->GetErrorY(iP);
-      if(std::isnan(ey[0])) ey[0] = 0.;
-      grme->SetPointError(iP, 1, ex, ex, ey, ey);
+      Double_t ey = gre->GetErrorY(iP);
+      if(std::isnan(ey)) ey = 0.;
+      grme->SetPointEX(iP, ex, ex);
+      grme->SetPointEY(iP, 0, ey, ey);
     }
 
     return grme;
