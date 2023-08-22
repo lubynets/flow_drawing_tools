@@ -6,6 +6,7 @@
 #define FLOW_DRAWING_TOOLS_SRC_GRAPH_H_
 
 #include "drawable_object.h"
+#include "Helper.h"
 
 class Graph : public DrawableObject {
 public:
@@ -17,7 +18,9 @@ public:
   void RefreshPoints() override;
   void RecalculateXaxis( const std::vector<double>& x_axis );
   void ShiftXaxis( const float value );
-  void SetPoints( TGraphErrors* graph ){ points_ = graph; }
+  void SetPoints( TGraphMultiErrors* graph ){ points_ = graph; }
+  void SetPoints( TGraphErrors* graph ){ points_ = Helper::TGraphErrorsToTGraphMultiErrors(graph); }
+  void SetSysErrorPoints( TGraphErrors* graph ){ Helper::AddErrorsToTGraphMultiErrors(points_, graph); }
   ClassDefOverride(Graph, 1)
 };
 

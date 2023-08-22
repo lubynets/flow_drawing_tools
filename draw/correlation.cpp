@@ -4,6 +4,7 @@
 
 #include "correlation.h"
 
+#include "Helper.h"
 #include "QnToolsHelper.h"
 ClassImp(Correlation);
 
@@ -61,28 +62,25 @@ void Correlation::RefreshPoints() {
   }
 #endif
   if(points_ == nullptr) {
+    TGraphErrors* points{nullptr};
     if(draw_errors_as_mean_.test(0) == 0) {
-      points_ = Qn::ToTGraph( average_ );
+      points = Qn::ToTGraph( average_ );
     } else {
-      points_ = ErrorsToTGraph(average_, bool(draw_errors_as_mean_.test(1)));
+      points = ErrorsToTGraph(average_, bool(draw_errors_as_mean_.test(1)));
     }
+    points_ = Helper::TGraphErrorsToTGraphMultiErrors(points);
   }
-  for( int i=0; i<points_->GetN(); ++i ){
-    auto y_err = points_->GetErrorY(i);
-    if( isnan( y_err ) )
-      points_->SetPointError(i, 0., 0.);
-  }
+
   if( fit_ )
     points_->Fit(fit_);
+
   if( calculate_systematics_from_variation_ ){
     std::vector<Qn::DataContainerStatMagic> variations;
     for( const auto& combination : combinations_ ){
       variations.emplace_back( average_ - combination );
     }
-    if(sys_error_points_ == nullptr) {
-      sys_error_points_ = Qn::ToTGraph( average_ );
-    }
-    for( int i=0; i<sys_error_points_->GetN(); ++i ){
+  TGraphErrors* sys_error_points{nullptr};
+    for( int i=0; i<sys_error_points->GetN(); ++i ){
       auto x_hi = average_.GetAxes().front().GetUpperBinEdge(i);
       auto x_lo = average_.GetAxes().front().GetLowerBinEdge(i);
       auto x_err = (x_hi - x_lo) / 4;
@@ -94,8 +92,9 @@ void Correlation::RefreshPoints() {
 //        y_err += var.At(i).Mean()*var.At(i).Mean();
       }
 //      y_err= sqrt(y_err);
-      sys_error_points_->SetPointError(i, x_err, y_err);
+      sys_error_points->SetPointError(i, x_err, y_err);
     }
+    Helper::AddErrorsToTGraphMultiErrors(points_, sys_error_points);
   }
   this->SetMarkerStyle();
 }
@@ -147,9 +146,9 @@ void Correlation::DivideValueByError() {
 
   for(int ip=0; ip<points_->GetN(); ip++) {
     const float y = points_->GetPointY(ip);
-    const float ey = points_->GetErrorY(ip);
+    const float ey = points_->GetErrorY(ip, 0);
     points_->SetPointY(ip, y/ey);
-    points_->SetPointError(ip, 0., 0.);
+    points_->SetPointEY(ip, 0, 0., 0.);
   }
 }
 

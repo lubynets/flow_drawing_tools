@@ -44,26 +44,39 @@ public:
     for( size_t i=1; i< containers.size(); ++i )
       correlation_ = correlation_+ containers.at(i);
     correlation_ = correlation_/ (double)containers.size();
+    combinations_ = containers;
   }
   ~DoubleDifferentialCorrelation() override = default;
   Qn::DataContainerStatMagic &GetCorrelation() {
     return correlation_;
   }
-  void Scale( double scale ){ correlation_ = correlation_*scale; }
+  void Scale( double scale ){
+    correlation_ = correlation_*scale;
+    for( auto& container : combinations_ )
+      container = container*scale;
+  }
   void Rebin( const std::vector<Qn::AxisD>& axes){
-    for( const auto& axis : axes)
+    for( const auto& axis : axes) {
       correlation_ = correlation_.Rebin(axis);
+      for( auto& container : combinations_ )
+        container = container.Rebin(axis);
+    }
   }
   void Select( const std::vector<Qn::AxisD>& axes){
-    for( const auto& axis : axes)
+    for( const auto& axis : axes) {
       correlation_ = correlation_.Select(axis);
+      for( auto& container : combinations_ )
+        container = container.Select(axis);
+    }
   }
   void SetSliceVariable(const std::string &name, const std::string &units ){
     slice_variable_name_ = name;
     slice_variable_units_ = units;
   }
-  void Project(std::vector<std::string> axes){
-    correlation_ = correlation_.Projection(std::move(axes));
+  void Project( const std::vector<std::string>& axes){
+    correlation_ = correlation_.Projection(axes);
+    for( auto& container : combinations_ )
+      container = container.Projection(axes);
   }
   void SetProjectionAxis(const Qn::AxisD &projection_axis) {
     projection_axis_ = projection_axis;
@@ -88,7 +101,7 @@ public:
   void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
   void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false ) { draw_errors_as_mean_.first = is_draw; draw_errors_as_mean_.second = multiply_by_sqrt_N; }
   void SetMeanType(Qn::Stat::ErrorType type);
-
+  void SetCalculateSystematicsFromVariation( bool is = true) { calculate_systematics_from_variation_ = is; }
   void RenameAxis(const std::string& from, const std::string& to);
 
   friend DoubleDifferentialCorrelation Plus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
@@ -102,16 +115,19 @@ protected:
   void ExeShiftProjectionAxis();
   void ExeSlightShiftProjectionAxis();
   Qn::DataContainerStatMagic correlation_;
+  std::vector<Qn::DataContainerStatMagic> combinations_;
   Qn::AxisD projection_axis_;
   Qn::AxisD slice_axis_;
   float slice_axis_shift_{0};
   std::vector<TGraphErrors*> projection_points_;
+  std::vector<TGraphErrors*> combinations_points_;
   std::string slice_variable_name_;
   std::string slice_variable_units_;
   std::string error_option_;
   std::vector<Graph*> projections_;
   int marker_{kFullCircle};
   bool is_fill_line_{false};
+  bool calculate_systematics_from_variation_{false};
   float shift_projection_axis_{0.f};
   std::pair<float, float> slight_shift_projection_axis_{0.f, 0.f};
   std::vector<int> palette_{};

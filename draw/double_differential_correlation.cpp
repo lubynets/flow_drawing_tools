@@ -10,9 +10,17 @@
 
 void DoubleDifferentialCorrelation::Calculate() {
   correlation_.SetErrors(error_type_);
+  for( auto& container : combinations_ ) {
+    container.SetErrors(error_type_);
+  }
 #ifdef DiscriminatorMode
   for(auto& av : correlation_) {
     av.SetMeanType(mean_type_);
+  }
+  for( auto& container : combinations_ ) {
+    for(auto& av : container) {
+      av.SetMeanType(mean_type_);
+    }
   }
 #endif
   this->Rebin({projection_axis_, slice_axis_});
@@ -27,6 +35,24 @@ void DoubleDifferentialCorrelation::Calculate() {
     std::string graph_name{ name+"_"+std::to_string(slice_bin) };
     if(draw_errors_as_mean_.first == false) {
       projection_points_.push_back( Qn::ToTGraph( proj_container ) );
+      if(calculate_systematics_from_variation_) {
+        std::vector<Qn::DataContainerStatMagic> variations;
+        for( const auto& combination : combinations_ ){
+          variations.emplace_back( proj_container - combination.Select( {name, 1, lo, hi} ).Projection({projection_axis_.Name()}) );
+        }
+        combinations_points_.push_back( Qn::ToTGraph( proj_container ) );
+        auto x_hi = proj_container.GetAxes().front().GetLowerBinEdge(0);
+        auto x_lo = proj_container.GetAxes().front().GetLowerBinEdge(proj_container.GetAxes().front().GetNBins());
+        auto x_err = (x_hi - x_lo) / 60;
+        for( int i=0; i<combinations_points_.back()->GetN(); ++i ){
+          double y_err=0;
+          for( auto var : variations ){
+            y_err += var.At(i).Mean()*var.At(i).Mean();
+          }
+          y_err = std::sqrt(y_err/variations.size());
+          combinations_points_.back()->SetPointError(i, x_err, y_err);
+        }
+      }
     } else {
       projection_points_.push_back( ErrorsToTGraph(proj_container, draw_errors_as_mean_.second) );
     }
@@ -62,6 +88,7 @@ void DoubleDifferentialCorrelation::FillGraphs() {
   for( auto graph : projection_points_ ){
     projections_.push_back( new Graph );
     projections_.back()->SetPoints( graph );
+    if(calculate_systematics_from_variation_) projections_.back()->SetSysErrorPoints( combinations_points_.at(i) );
     projections_.back()->SetTitle(graph->GetTitle());
     projections_.back()->SetStyle(colors.at(i), marker_);
     projections_.back()->SetIsFillLine(is_fill_line_);

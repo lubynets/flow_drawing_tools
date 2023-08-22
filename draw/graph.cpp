@@ -7,55 +7,17 @@
 ClassImp(Graph);
 
 Graph::Graph( DrawableObject* other ) : DrawableObject(*other) {
-  points_ = new TGraphErrors( other->GetPoints()->GetN() );
-  points_ = new TGraphErrors( other->GetPoints()->GetN() );
-  points_->SetTitle( title_.c_str() );
-  for( int i=0; i<other->GetPoints()->GetN(); i++ ){
-    auto x = other->GetPoints()->GetPointX(i);
-    auto y = other->GetPoints()->GetPointY(i);
-    auto x_err = other->GetPoints()->GetErrorX(i);
-    auto y_err = other->GetPoints()->GetErrorY(i);
-    points_->SetPoint(i, x, y);
-    points_->SetPointError(i, x_err, y_err);
-  }
-  if( other->GetSysErrorPoints() ){
-    sys_error_points_ = new TGraphErrors( other->GetSysErrorPoints()->GetN() );
-    sys_error_points_ = new TGraphErrors( other->GetSysErrorPoints()->GetN() );
-    sys_error_points_->SetTitle( title_.c_str() );
-    for( int i=0; i<other->GetSysErrorPoints()->GetN(); i++ ){
-      auto x = other->GetSysErrorPoints()->GetPointX(i);
-      auto y = other->GetSysErrorPoints()->GetPointY(i);
-      auto x_err = other->GetSysErrorPoints()->GetErrorX(i);
-      auto y_err = other->GetSysErrorPoints()->GetErrorY(i);
-      sys_error_points_->SetPoint(i, x, y);
-      sys_error_points_->SetPointError(i, x_err, y_err);
-    }
-  }
+  points_ = (TGraphMultiErrors*)other->GetPoints()->Clone();
 };
 
 void Graph::RecalculateXaxis( const std::vector<double>& x_axis ){
-  if( x_axis.size() >= (size_t) points_->GetN() ){
-    for( int i=0; i<points_->GetN(); i++ ){
-      auto x = x_axis.at(i);
-      auto y = points_->GetPointY(i);
-      auto x_err = points_->GetErrorX(i);
-      auto y_err = points_->GetErrorY(i);
-      points_->SetPoint(i, x, y);
-      points_->SetPointError(i, x_err, y_err);
+  for( int i=0; i<std::max(points_->GetN(), (Int_t)x_axis.size()); i++ ){
+    if(i>points_->GetN()-1) {
+      points_->RemovePoint(i);
+      continue;
     }
-  }
-  if ( x_axis.size() < (size_t) points_->GetN() ){
-    auto points_old = points_;
-    points_ = new TGraphErrors( x_axis.size() );
-    for( int i=0; i<points_->GetN(); i++ ){
-      auto x = x_axis.at(i);
-      auto y = points_old->GetPointY(i);
-      auto x_err = points_old->GetErrorX(i);
-      auto y_err = points_old->GetErrorY(i);
-      points_->SetPoint(i, x, y);
-      points_->SetPointError(i, x_err, y_err);
-    }
-    delete points_old;
+    auto x = x_axis.at(i);
+    points_->SetPointX(i, x);
   }
 }
 
@@ -69,6 +31,7 @@ void Graph::ShiftXaxis( const float value ){
 Graph::Graph(const std::string &file_name,
              const std::vector<std::string> &objects, const std::string &title)
     : DrawableObject(file_name, objects, title) {
+  //NOTE This constructor does not accept TGraphMultiErrors as an input. Maybe fix later?
   std::vector<TGraphErrors*> graphs;
   graphs.reserve(objects.size());
   for( const auto& name : objects ){
@@ -78,7 +41,7 @@ Graph::Graph(const std::string &file_name,
       graphs.push_back((TGraphErrors*)this->ReadObjectFromFile<TGraphAsymmErrors>(name));
     }
   }
-  points_ = new TGraphErrors(graphs.front()->GetN() );
+  points_ = new TGraphMultiErrors(graphs.front()->GetN() );
   for( int i=0; i < graphs.front()->GetN(); ++i ){
     double x = graphs.front()->GetPointX(i);
     double y = 0;
@@ -95,7 +58,8 @@ Graph::Graph(const std::string &file_name,
     xerr/= (double) graphs.size();
     xerr= sqrt(xerr);
     points_->SetPoint(i, x, y);
-    points_->SetPointError(i, xerr, yerr);
+    points_->SetPointEX(i, xerr, xerr);
+    points_->SetPointEY(i, 0, yerr, yerr);
   }
   this->SetMarkerStyle();
 }
