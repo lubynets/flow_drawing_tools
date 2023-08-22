@@ -51,9 +51,6 @@ public:
   void SetErrorOption(const std::string &error_option) {
     error_option_ = error_option;
   }
-//  void SetSysErrors( double x_error, double relative_sys_error );
-//  void SetSysErrors( double x_error, std::vector<double> systematical_errors );
-//  void SetSysErrors( std::vector<double> x_errors, std::vector<double> y_errors );
   void SetIsFillLine(bool value=true) { is_fill_line_ = value; }
 
 protected:

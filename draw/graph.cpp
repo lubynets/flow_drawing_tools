@@ -8,29 +8,6 @@ ClassImp(Graph);
 
 Graph::Graph( DrawableObject* other ) : DrawableObject(*other) {
   points_ = (TGraphMultiErrors*)other->GetPoints()->Clone();
-//  points_ = new TGraphErrors( other->GetPoints()->GetN() );
-//  points_->SetTitle( title_.c_str() );
-//  for( int i=0; i<other->GetPoints()->GetN(); i++ ){
-//    auto x = other->GetPoints()->GetPointX(i);
-//    auto y = other->GetPoints()->GetPointY(i);
-//    auto x_err = other->GetPoints()->GetErrorX(i);
-//    auto y_err = other->GetPoints()->GetErrorY(i);
-//    points_->SetPoint(i, x, y);
-//    points_->SetPointError(i, x_err, y_err);
-//  }
-//  if( other->GetSysErrorPoints() ){
-//    sys_error_points_ = new TGraphErrors( other->GetSysErrorPoints()->GetN() );
-//    sys_error_points_ = new TGraphErrors( other->GetSysErrorPoints()->GetN() );
-//    sys_error_points_->SetTitle( title_.c_str() );
-//    for( int i=0; i<other->GetSysErrorPoints()->GetN(); i++ ){
-//      auto x = other->GetSysErrorPoints()->GetPointX(i);
-//      auto y = other->GetSysErrorPoints()->GetPointY(i);
-//      auto x_err = other->GetSysErrorPoints()->GetErrorX(i);
-//      auto y_err = other->GetSysErrorPoints()->GetErrorY(i);
-//      sys_error_points_->SetPoint(i, x, y);
-//      sys_error_points_->SetPointError(i, x_err, y_err);
-//    }
-//  }
 };
 
 void Graph::RecalculateXaxis( const std::vector<double>& x_axis ){
@@ -48,7 +25,6 @@ void Graph::ShiftXaxis( const float value ){
   for(int i=0; i<points_->GetN(); i++){
     auto x = points_->GetPointX(i);
     points_->SetPointX(i, x+value);
-//    if(sys_error_points_!=nullptr) sys_error_points_->SetPointX(i, x+value);
   }
 }
 
