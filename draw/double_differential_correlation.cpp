@@ -43,7 +43,7 @@ void DoubleDifferentialCorrelation::Calculate() {
         combinations_points_.push_back( Qn::ToTGraph( proj_container ) );
         auto x_hi = proj_container.GetAxes().front().GetLowerBinEdge(0);
         auto x_lo = proj_container.GetAxes().front().GetLowerBinEdge(proj_container.GetAxes().front().GetNBins());
-        auto x_err = (x_hi - x_lo) / 40;
+        auto x_err = (x_hi - x_lo) / 60;
         for( int i=0; i<combinations_points_.back()->GetN(); ++i ){
           double y_err=0;
           for( auto var : variations ){

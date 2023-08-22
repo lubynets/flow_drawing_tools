@@ -31,6 +31,8 @@ namespace Helper {
     const int Npoints = gre->GetN();
     auto ey = new Double_t[Npoints];
     for (int iP = 0; iP < Npoints; iP++) {
+      const Double_t ex = gre->GetErrorX(iP);
+      grme->SetPointEX(iP, ex, ex);
       ey[iP] = gre->GetErrorY(iP);
     }
 
