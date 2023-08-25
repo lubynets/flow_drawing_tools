@@ -109,7 +109,8 @@ void HeapPicture::FillStackWithDrawableObjects() {
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
     } else {
-      std::string opt{"P+" + obj->GetErrorOption() + "; 2"};
+      std::string opt{"P+" + obj->GetErrorOption()};
+      if(obj->GetPoints()->GetNYErrors()>1) opt += "; 2";
       stack_->Add(obj->GetPoints(), opt.c_str());
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");

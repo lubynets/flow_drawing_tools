@@ -79,19 +79,19 @@ void Correlation::RefreshPoints() {
     for( const auto& combination : combinations_ ){
       variations.emplace_back( average_ - combination );
     }
-  TGraphErrors* sys_error_points{nullptr};
+    TGraphErrors* sys_error_points{nullptr};
+    sys_error_points = Qn::ToTGraph(average_);
     for( int i=0; i<sys_error_points->GetN(); ++i ){
-      auto x_hi = average_.GetAxes().front().GetUpperBinEdge(i);
-      auto x_lo = average_.GetAxes().front().GetLowerBinEdge(i);
-      auto x_err = (x_hi - x_lo) / 4;
+      auto x_hi = average_.GetAxes().front().GetLowerBinEdge(0);
+      auto x_lo = average_.GetAxes().front().GetLowerBinEdge(average_.GetAxes().front().GetNBins());
+      auto x_err = (x_hi - x_lo) / 60;
       double y_err=0;
       for( auto var : variations ){
         auto err = fabs(var.At(i).Mean());
         if( y_err < err )
-          y_err=err;
-//        y_err += var.At(i).Mean()*var.At(i).Mean();
+        y_err += var.At(i).Mean()*var.At(i).Mean();
       }
-//      y_err= sqrt(y_err);
+      y_err = std::sqrt(y_err/variations.size());
       sys_error_points->SetPointError(i, x_err, y_err);
     }
     Helper::AddErrorsToTGraphMultiErrors(points_, sys_error_points);
