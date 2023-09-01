@@ -45,7 +45,7 @@ void Picture::CustomizeYRangeWithLimits(float lo, float hi, float part) {
   SetYRange({down, up});
 }
 
-bool Picture::OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const {
+bool Picture::OverlapRectangles(std::array<float, 4> rect1, std::array<float, 4> rect2) const {
   if(rect1.at(kX1) > rect2.at(kX2) || rect1.at(kX2) < rect2.at(kX1))
     return false;
   if(rect1.at(kY1) > rect2.at(kY2) || rect1.at(kY2) < rect2.at(kY1))
@@ -54,7 +54,7 @@ bool Picture::OverlapRectangles(std::vector<float> rect1, std::vector<float> rec
   return true;
 }
 
-std::vector<float> Picture::TransformToUser(std::vector<float> x) const {
+std::array<float, 4> Picture::TransformToUser(std::array<float, 4> x) const {
   // Transforms from Pad coordinates to User coordinates.
   // This can probably be replaced by using the built-in conversion commands.
 
@@ -71,7 +71,7 @@ std::vector<float> Picture::TransformToUser(std::vector<float> x) const {
   return {xlow, ylow, xhigh, yhigh};
 }
 
-bool Picture::OverlapWithGraph(TGraphMultiErrors* graph, std::vector<float> rect2) const {
+bool Picture::OverlapWithGraph(TGraphMultiErrors* graph, std::array<float, 4> rect2) const {
   const float y2x = (y_range_.at(1) - y_range_.at(0))/(x_range_.at(1) - x_range_.at(0));
   const double minex = (graph->GetPointX(1)-graph->GetPointX(0))/4.;
   const double miney = minex*y2x;

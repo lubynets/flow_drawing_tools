@@ -101,9 +101,9 @@ public:
 
 protected:
   
-  bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
-  std::vector<float> TransformToUser(std::vector<float> x) const;
-  bool OverlapWithGraph(TGraphMultiErrors* graph, std::vector<float> rect2) const;
+  bool OverlapRectangles(std::array<float, 4> rect1, std::array<float, 4> rect2) const;
+  std::array<float, 4> TransformToUser(std::array<float, 4> x) const;
+  bool OverlapWithGraph(TGraphMultiErrors* graph, std::array<float, 4> rect2) const;
   std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;
   template <typename T>
   void ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec={-1});

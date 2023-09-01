@@ -120,107 +120,70 @@ void HeapPicture::FillStackWithDrawableObjects() {
 
 void HeapPicture::CustomizeLegend(TLegend* leg) {
   
-  const float zero = 0.;
   const float one = 1.;
-  const float middle = 0.5;
-  
-  const float leftspace = 0.04;
-  const float rightspace = 0.02;
-  const float topspace = 0.02;
-  const float bottomspace = 0.04;
-  
-  const int Nspaces = 3;
-  
+  const float hspace = 0.01;
+  const float vspace = 0.01;
+
   const float width = GetOptimalLegendSize(leg).first;
   const float height = GetOptimalLegendSize(leg).second;
-  
-  std::vector<std::vector<float>> places;
-  
-  for(int i=1; i<=Nspaces; i++)  // top right
-    for(int j=1; j<=Nspaces; j++) {
-      const float x_stop = one - i*rightspace;
-      const float y_stop = one - j*topspace;
-      const float x_start = x_stop - width;
-      const float y_start = y_stop - height;
-      places.push_back({x_start, y_start, x_stop, y_stop});
-    }
-  
-  for(int j=1; j<=Nspaces; j++) { // top
-    const float x_stop = middle + width/2;
-    const float y_stop = one - j*topspace;
-    const float x_start = middle - width/2;
-    const float y_start = y_stop - height;
-    places.push_back({x_start, y_start, x_stop, y_stop});
-  }
-  
-  for(int i=1; i<=Nspaces; i++) { // right
-    const float x_stop = one - i*rightspace;
-    const float y_stop = middle + height/2;
-    const float x_start = x_stop - width;
-    const float y_start = middle - height/2;
-    places.push_back({x_start, y_start, x_stop, y_stop});
-  }
-  
-  for(int i=1; i<=Nspaces; i++) { // left
-    const float x_start = zero + i*leftspace;
-    const float y_stop = middle + height/2;
-    const float x_stop = x_start + width;
-    const float y_start = middle - height/2;
-    places.push_back({x_start, y_start, x_stop, y_stop});
-  }
-  
-  for(int i=1; i<=Nspaces; i++)  // bottom right
-    for(int j=1; j<=Nspaces; j++) {
-      const float x_stop = one - i*rightspace;
-      const float y_start = zero + j*bottomspace;
-      const float x_start = x_stop - width;
-      const float y_stop = y_start + height;
-      places.push_back({x_start, y_start, x_stop, y_stop});
-    }  
-    
-  for(int i=1; i<=Nspaces; i++)  // bottom left
-    for(int j=1; j<=Nspaces; j++) {
-      const float x_start = zero + i*leftspace;
-      const float y_start = zero + j*bottomspace;
-      const float x_stop = x_start + width;
-      const float y_stop = y_start + height;
-      places.push_back({x_start, y_start, x_stop, y_stop});
-    }  
-    
-  for(int j=1; j<=Nspaces; j++) { // bottom
-    const float x_start = middle - width/2;
-    const float y_start = zero + j*bottomspace;
-    const float x_stop = middle + width/2;
-    const float y_stop = y_start + height;
-    places.push_back({x_start, y_start, x_stop, y_stop});
-  }    
-  
-  for(auto& pl : places) {
-    bool is_good_place = true;
-    std::vector<float> place_user = TransformToUser(pl);
-    for(auto& drob : drawable_objects_) {
-      TGraphMultiErrors* gr = (TGraphMultiErrors*)drob->GetPoints();
-      if(OverlapWithGraph(gr, place_user)) {
-        is_good_place = false;
-        break;
-      }
-    }
-    if(is_good_place) {
-      leg -> SetX1(place_user.at(kX1));
-      leg -> SetY1(place_user.at(kY1));
-      leg -> SetX2(place_user.at(kX2));
-      leg -> SetY2(place_user.at(kY2));
-      leg -> SetOption("br");
-      leg -> SetBorderSize(0);
+
+  float x_stop = one - hspace;
+  float y_stop = one - vspace;
+  float x_start = x_stop - width;
+  float y_start = y_stop - height;
+  std::array<float, 4> place{};
+
+  while(x_start > 0.4) {
+    place = {x_start, y_start, x_stop, y_stop};
+    if(IsGoodPlaceForLegend(place)) {
+      ApplyPlaceForLegend(leg, place);
       return;
     }
+    x_start -= hspace;
+    x_stop -= hspace;
   }
-    std::vector<float> place_user = TransformToUser(places.at(0));
-    leg -> SetX1(place_user.at(kX1));
-    leg -> SetY1(place_user.at(kY1));
-    leg -> SetX2(place_user.at(kX2));
-    leg -> SetY2(place_user.at(kY2));
-    leg -> SetOption("br");
+
+  x_stop = one - hspace;
+  y_stop = one - vspace;
+  x_start = x_stop - width;
+  y_start = y_stop - height;
+
+  while(y_start > vspace) {
+    place = {x_start, y_start, x_stop, y_stop};
+    if(IsGoodPlaceForLegend(place)) {
+      ApplyPlaceForLegend(leg, place);
+      return;
+    }
+    y_start -= vspace;
+    y_stop -= vspace;
+  }
+
+  // none of them is good place - let the legend be default in top right corner
+  x_stop = one - hspace;
+  y_stop = one - vspace;
+  x_start = x_stop - width;
+  y_start = y_stop - height;
+  ApplyPlaceForLegend(leg, place);
+  leg->SetBorderSize(1);
+}
+
+bool HeapPicture::IsGoodPlaceForLegend(std::array<float, 4> place) {
+  std::array<float, 4> place_user = TransformToUser(place);
+  for(auto& drob : drawable_objects_) {
+    TGraphMultiErrors* gr = (TGraphMultiErrors*)drob->GetPoints();
+    if(OverlapWithGraph(gr, place_user)) return false;
+  }
+  return true;
+}
+
+void HeapPicture::ApplyPlaceForLegend(TLegend* leg, std::array<float, 4> place) {
+  std::array<float, 4> place_user = TransformToUser(place);
+  leg -> SetX1(place_user.at(kX1));
+  leg -> SetY1(place_user.at(kY1));
+  leg -> SetX2(place_user.at(kX2));
+  leg -> SetY2(place_user.at(kY2));
+  leg -> SetOption("br");
+  leg -> SetBorderSize(0);
 }
 
 std::pair<float, float> HeapPicture::GetYLimits(TGraphMultiErrors* gr) const {
