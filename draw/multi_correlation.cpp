@@ -26,12 +26,13 @@ void MultiCorrelation::ApplyStyle() {
     }
   }
   int i=0;
+  if( markers_.size() == 1 ) markers_ = std::vector<int>(correlations_.size(), markers_.front());
+  if(is_sys_errors_.size() == 1 ) is_sys_errors_ = std::vector<bool>(correlations_.size(), is_sys_errors_.front());
+  if( is_fill_lines_.size() == 1 ) is_fill_lines_ = std::vector<bool>(correlations_.size(), is_fill_lines_.front());
   for( auto correlation : correlations_ ){
-    if( markers_.size() == 1 ) {
-      correlation->SetStyle(colors.at(i), markers_.front());
-    }else{
-      correlation->SetStyle(colors.at(i), markers_.at(i));
-    }
+    correlation->SetStyle(colors.at(i), markers_.at(i));
+    correlation->SetCalculateSystematicsFromVariation(is_sys_errors_.at(i));
+    correlation->SetIsFillLine(is_fill_lines_.at(i));
     ++i;
   }
 }
@@ -55,6 +56,10 @@ void MultiCorrelation::Project(const std::vector<std::string>& axes) {
     corr->Project(axes);
   }
 }
+void MultiCorrelation::RebinAndSelect(const std::vector<Qn::AxisD>& axes) {
+  this->Rebin(axes);
+  this->Select(axes);
+}
 void MultiCorrelation::SetErrorOption(const std::string &error_option) {
   for( auto &corr : correlations_ ){
     corr->SetErrorOption(error_option);
@@ -64,7 +69,6 @@ void MultiCorrelation::AddCorrelation(const std::string& file,
                                       const std::vector<std::string>& objects,
                                       const std::string& title) {
   correlations_.push_back( new Correlation( file, objects, title ) );
-  correlations_.back()->SetCalculateSystematicsFromVariation(is_fill_sys_errors_);
 }
 
 void MultiCorrelation::SlightShiftXAxis( float value ) {
@@ -75,5 +79,24 @@ void MultiCorrelation::SlightShiftXAxis( float value ) {
       auto x = correlations_.at(i)->GetPoints()->GetPointX(j);
       correlations_.at(i)->GetPoints()->SetPointX(j, x+shift);
     }
+  }
+}
+
+void MultiCorrelation::RenameAxis(const std::string& from, const std::string& to) {
+  for(auto& cl : correlations_) {
+    try {
+      cl->RenameAxis(from, to);
+      std::cout << "INFO: Success MultiCorrelation::RenameAxis("<< from << ", " << to << ") to " <<
+      cl->GetTitle() << "\n";
+    } catch (std::exception&) {
+      std::cout << "Warning: MultiCorrelation::RenameAxis("<< from << ", " << to << ") is not applicable to " <<
+      cl->GetTitle() << "\n";
+    }
+  }
+}
+
+void MultiCorrelation::ShiftXaxis(float value) {
+  for(auto& cl : correlations_) {
+    cl->ShiftXaxis(value);
   }
 }

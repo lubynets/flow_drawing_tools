@@ -24,22 +24,28 @@ public:
   void Rebin( const std::vector<Qn::AxisD>& axes);
   void Select( const std::vector<Qn::AxisD>& axes);
   void Project(const std::vector<std::string>& axes);
+  void RebinAndSelect( const std::vector<Qn::AxisD>& axes);
   void SetMarkers(const std::vector<int> &markers) { markers_ = markers; }
   [[nodiscard]] const std::vector<Correlation*> &GetCorrelations() {
     this->ApplyStyle();
     return correlations_;
   }
+  Correlation* GetCorrelation(int i) { return correlations_.at(i); }
   void SetMarker(int marker) { marker_ = marker; }
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
+  void SetIsFillLines(const std::vector<bool>& is={true}) { is_fill_lines_ = is; }
   void SetErrorOption(const std::string &error_option);
+  void ShiftXaxis( float value );
   void SlightShiftXAxis( float value );
-  void SetIsFillSysErrors(bool value=true) { is_fill_sys_errors_ = value; }
+  void SetIsFillSysErrors(const std::vector<bool>& value={true}) { is_sys_errors_ = value; }
+  void RenameAxis(const std::string& from, const std::string& to);
 
 protected:
-  bool is_fill_sys_errors_{false};
   void ApplyStyle();
+  std::vector<bool> is_sys_errors_{false};
   std::vector<Correlation*> correlations_;
   std::vector<int> markers_;
+  std::vector<bool> is_fill_lines_{false};
   int marker_{kFullCircle};
   std::vector<int> palette_{
       kPink,

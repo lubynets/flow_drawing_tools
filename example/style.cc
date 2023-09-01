@@ -4,9 +4,9 @@
 {
 gStyle->SetCanvasPreferGL(true);
 gStyle->SetPadLeftMargin(0.15);
-gStyle->SetPadRightMargin(0.05);
-gStyle->SetPadBottomMargin(0.1);
-gStyle->SetPadTopMargin(0.05);
+gStyle->SetPadRightMargin(0.02);
+gStyle->SetPadBottomMargin(0.08);
+gStyle->SetPadTopMargin(0.01);
 gStyle->SetLegendBorderSize(0);
 gStyle->SetFrameLineWidth(4);
 gStyle->SetMarkerSize(2);

@@ -48,11 +48,16 @@ public:
     for( auto& container : combinations_ )
       container = container.Projection(axes);
   }
+  void RebinAndSelect( const std::vector<Qn::AxisD>& axes) {
+    this->Rebin(axes);
+    this->Select(axes);
+  }
   void Scale(double num){
     average_ = average_ *num;
     for( auto& container : combinations_ )
       container = container*num;
   }
+  void ShiftXaxis( float value );
   friend Correlation operator/( const Correlation& num, const Correlation& den);
   void SetCalculateSystematicsFromVariation( bool is = true) { calculate_systematics_from_variation_ = is; }
 
@@ -63,9 +68,9 @@ public:
   void DivideValueByError();
 
   void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false );
-
   void SetErrorType(Qn::Stat::ErrorType type) { error_type_ = type; }
   void SetMeanType(Qn::Stat::ErrorType type);
+  void RenameAxis(const std::string& from, const std::string& to);
 
 protected:
   Qn::DataContainerStatMagic average_;

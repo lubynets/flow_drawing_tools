@@ -229,7 +229,10 @@ std::pair<float, float> HeapPicture::GetYLimits(TGraphMultiErrors* gr) const {
 
   for(int i = 0; i<gr->GetN(); i++) {
     const float y = gr->GetPointY(i);
-    const float ey = gr->GetErrorY(i, 0);
+    const float ey0 = gr->GetErrorY(i, 0);
+    float ey1{0};
+    if(gr->GetNYErrors()>1) ey1 = gr->GetErrorY(i, 1);
+    const float ey = std::max(ey0, ey1);
     const float err = std::abs(ey/y);
     if(err < relative_error_threshold_ || relative_error_threshold_ < 0.) {
       lo = std::min(lo, y-ey);

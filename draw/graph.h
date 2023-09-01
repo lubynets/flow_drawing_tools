@@ -17,7 +17,7 @@ public:
   ~Graph() override;
   void RefreshPoints() override;
   void RecalculateXaxis( const std::vector<double>& x_axis );
-  void ShiftXaxis( const float value );
+  void ShiftXaxis( float value );
   void SetPoints( TGraphMultiErrors* graph ){ points_ = graph; }
   void SetPoints( TGraphErrors* graph ){ points_ = Helper::TGraphErrorsToTGraphMultiErrors(graph); }
   void SetSysErrorPoints( TGraphErrors* graph ){ Helper::AddErrorsToTGraphMultiErrors(points_, graph); }

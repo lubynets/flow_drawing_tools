@@ -62,6 +62,7 @@ public:
   void DrawZeroLine(bool draw_zero_line) {
     Picture::draw_zero_line = draw_zero_line;
   }
+  const TMultiGraph* GetStack() const { return stack_; }
   void SetAutoLegend(bool auto_legend) { auto_legend_ = auto_legend; }
   void AddText( TLatex text, float size=0.04, int font=62 );
   void AddText( std::string text, std::pair<float, float> intramargin_xy={0.03, 0.92}, float size=0.04, int font=62 );

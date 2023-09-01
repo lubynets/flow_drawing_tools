@@ -74,7 +74,7 @@ void Correlation::RefreshPoints() {
   if( fit_ )
     points_->Fit(fit_);
 
-  if( calculate_systematics_from_variation_ ){
+  if( calculate_systematics_from_variation_ && points_->GetNYErrors() != 2 ){
     std::vector<Qn::DataContainerStatMagic> variations;
     for( const auto& combination : combinations_ ){
       variations.emplace_back( average_ - combination );
@@ -149,6 +149,30 @@ void Correlation::DivideValueByError() {
     const float ey = points_->GetErrorY(ip, 0);
     points_->SetPointY(ip, y/ey);
     points_->SetPointEY(ip, 0, 0., 0.);
+  }
+}
+
+void Correlation::RenameAxis(const std::string& from, const std::string& to) {
+  std::vector<Qn::AxisD>& axes = average_.GetAxes();
+  int iaxis{0};
+  for(Qn::AxisD& ax : axes) {
+    if(ax.Name() == from) {
+      ax.SetName(to);
+      for(auto& comb : combinations_) {
+        comb.GetAxes().at(iaxis).SetName(to);
+      }
+      return;
+    }
+    iaxis++;
+  }
+  throw std::runtime_error("DoubleDifferentialCorrelation::RenameAxis() - axis from is absent");
+}
+
+void Correlation::ShiftXaxis( float value ){
+  this->RefreshPoints();
+  for(int i=0; i<points_->GetN(); i++){
+    auto x = points_->GetPointX(i);
+    points_->SetPointX(i, x+value);
   }
 }
 

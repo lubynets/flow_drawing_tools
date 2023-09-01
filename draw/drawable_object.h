@@ -60,7 +60,6 @@ protected:
   bool is_fill_line_{false};
   TF1* fit_{};
   TGraphMultiErrors* points_{nullptr};
-//  TGraphErrors* sys_error_points_{nullptr};
   std::string error_option_{"Z"};
   std::string title_;
   ClassDefOverride(DrawableObject, 1)
