@@ -158,6 +158,36 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
     y_stop -= vspace;
   }
 
+  x_stop = one - hspace;
+  y_start = vspace;
+  x_start = x_stop - width;
+  y_stop = y_start + height;
+
+  while(x_start > hspace) {
+    place = {x_start, y_start, x_stop, y_stop};
+    if(IsGoodPlaceForLegend(place)) {
+      ApplyPlaceForLegend(leg, place);
+      return;
+    }
+    x_start -= hspace;
+    x_stop -= hspace;
+  }
+
+  x_start = hspace;
+  y_start = vspace;
+  x_stop = x_start + width;
+  y_stop = y_start + height;
+
+  while(y_stop < 0.7) {
+    place = {x_start, y_start, x_stop, y_stop};
+    if(IsGoodPlaceForLegend(place)) {
+      ApplyPlaceForLegend(leg, place);
+      return;
+    }
+    y_start += vspace;
+    y_stop += vspace;
+  }
+
   // none of them is good place - let the legend be default in top right corner
   x_stop = one - hspace;
   y_stop = one - vspace;
