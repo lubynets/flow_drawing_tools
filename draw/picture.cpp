@@ -4,6 +4,8 @@
 
 #include "picture.h"
 
+#include "Helper.h"
+
 #include "TLegendEntry.h"
 
 #include <numeric>
@@ -45,50 +47,43 @@ void Picture::CustomizeYRangeWithLimits(float lo, float hi, float part) {
   SetYRange({down, up});
 }
 
-bool Picture::OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const {
-  if(rect1.at(kX1) > rect2.at(kX2) || rect1.at(kX2) < rect2.at(kX1))
-    return false;
-  if(rect1.at(kY1) > rect2.at(kY2) || rect1.at(kY2) < rect2.at(kY1))
-    return false;
-  
-  return true;
-}
-
-std::vector<float> Picture::TransformToUser(std::vector<float> x) const {
+std::array<float, 4> Picture::TransformToUser(std::array<float, 4> x) const {
   // Transforms from Pad coordinates to User coordinates.
   // This can probably be replaced by using the built-in conversion commands.
 
   const float xstart = x_range_.at(0);
   const float xlength = x_range_.at(1) - xstart;
-  float xlow = xlength * x.at(kX1) + xstart;
-  float xhigh = xlength * x.at(kX2) + xstart;
+  float xlow = xlength * x.at(Rectangle::kX1) + xstart;
+  float xhigh = xlength * x.at(Rectangle::kX2) + xstart;
 
   const float ystart = y_range_.at(0);
   const float ylength = y_range_.at(1) - ystart;
-  float ylow = ylength * x.at(kY1) + ystart;
-  float yhigh = ylength * x.at(kY2) + ystart;
+  float ylow = ylength * x.at(Rectangle::kY1) + ystart;
+  float yhigh = ylength * x.at(Rectangle::kY2) + ystart;
 
   return {xlow, ylow, xhigh, yhigh};
 }
 
-bool Picture::OverlapWithGraph(TGraphMultiErrors* graph, std::vector<float> rect2) const {
-  const float y2x = (y_range_.at(1) - y_range_.at(0))/(x_range_.at(1) - x_range_.at(0));
-  const double minex = (graph->GetPointX(1)-graph->GetPointX(0))/4.;
-  const double miney = minex*y2x;
+bool Picture::OverlapWithGraph(TGraphMultiErrors* graph, std::array<float, 4> rect2) const {
+  const double minex = (x_range_.at(1) - x_range_.at(0))/70.;
+  const double miney = (y_range_.at(1) - y_range_.at(0))/70.;
   
   for(int i=0; i<graph->GetN(); i++) {
     const float x = graph->GetPointX(i);
     const float y = graph->GetPointY(i);
     const float ex = std::max(graph->GetErrorX(i), minex);
-    const float ey = std::max(graph->GetErrorY(i, 0), miney);
+    const float ey0 = std::max(graph->GetErrorY(i, 0), miney);
+    float ey1{0};
+    if(graph->GetNYErrors()>1) ey1 = graph->GetErrorY(i, 1);
+    const float ey = std::max(ey0, ey1);
     
-    if(OverlapRectangles(rect2, {x-ex, y-ey, x+ex, y+ey}))
+    if(Rectangle::OverlapRectangles(rect2, {x-ex, y-ey, x+ex, y+ey}))
       return true;
   }
   return false;
 }
 
-std::pair<float, float> Picture::GetOptimalLegendSize(TLegend* leg) const {
+std::pair<float, float> Picture::GetOptimalLegendSize(TLegend* leg) {
   int max_length = -1;
   TList* primitives = leg->GetListOfPrimitives();
   for(int iP=0; iP<primitives->GetEntries(); iP++) {

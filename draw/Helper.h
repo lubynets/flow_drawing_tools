@@ -15,7 +15,7 @@ namespace Helper {
       grme->SetPoint(iP, gre->GetPointX(iP), gre->GetPointY(iP));
       const Double_t ex = gre->GetErrorX(iP);
       Double_t ey = gre->GetErrorY(iP);
-      if(std::isnan(ey)) ey = 0.;
+      if (std::isnan(ey)) ey = 0.;
       grme->SetPointEX(iP, ex, ex);
       grme->SetPointEY(iP, 0, ey, ey);
     }
@@ -38,6 +38,28 @@ namespace Helper {
 
     grme->AddYError(Npoints, ey, ey);
   }
+
+}
+
+namespace Rectangle {
+
+  enum corners : short {
+      kX1 = 0,
+      kY1,
+      kX2,
+      kY2,
+      kNumberOfCorners
+  };
+
+  inline bool OverlapRectangles(std::array<float, 4> rect1, std::array<float, 4> rect2) {
+    if(rect1.at(kX1) > rect2.at(kX2) || rect1.at(kX2) < rect2.at(kX1))
+      return false;
+    if(rect1.at(kY1) > rect2.at(kY2) || rect1.at(kY2) < rect2.at(kY1))
+      return false;
+
+    return true;
+  }
+
 }
 
 #endif //FLOW_DRAWING_TOOLS_HELPER_H

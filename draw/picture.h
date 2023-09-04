@@ -101,10 +101,9 @@ public:
 
 protected:
   
-  bool OverlapRectangles(std::vector<float> rect1, std::vector<float> rect2) const;
-  std::vector<float> TransformToUser(std::vector<float> x) const;
-  bool OverlapWithGraph(TGraphMultiErrors* graph, std::vector<float> rect2) const;
-  std::pair<float, float> GetOptimalLegendSize(TLegend* leg) const;
+  std::array<float, 4> TransformToUser(std::array<float, 4> x) const;
+  bool OverlapWithGraph(TGraphMultiErrors* graph, std::array<float, 4> rect2) const;
+  static std::pair<float, float> GetOptimalLegendSize(TLegend* leg) ;
   template <typename T>
   void ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec={-1});
   
@@ -132,15 +131,7 @@ protected:
   float xmax_ = -std::numeric_limits<float>::max();
   float ymin_ =  std::numeric_limits<float>::max();
   float ymax_ = -std::numeric_limits<float>::max();
-  
-  enum corners : short {
-    kX1 = 0,
-    kY1,
-    kX2,
-    kY2,
-    kNumberOfCorners    
-  };
-  
+
   ClassDefOverride(Picture, 1)
 };
 
