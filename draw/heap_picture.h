@@ -33,7 +33,7 @@ public:
   void CustomizeLegend(TLegend* leg) override;
 
 protected:
-  bool IsGoodPlaceForLegend(std::array<float, 4> place);
+  bool IsGoodPlaceForLegend(std::array<float, 4> place) const;
   void ApplyPlaceForLegend(TLegend* leg, std::array<float, 4> place);
 
   std::vector<DrawableObject*> drawable_objects_;

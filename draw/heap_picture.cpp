@@ -3,6 +3,7 @@
 //
 
 #include "heap_picture.h"
+#include "Helper.h"
 #include "TH1.h"
 ClassImp(HeapPicture)
 
@@ -197,7 +198,7 @@ void HeapPicture::CustomizeLegend(TLegend* leg) {
   leg->SetBorderSize(1);
 }
 
-bool HeapPicture::IsGoodPlaceForLegend(std::array<float, 4> place) {
+bool HeapPicture::IsGoodPlaceForLegend(std::array<float, 4> place) const {
   std::array<float, 4> place_user = TransformToUser(place);
   for(auto& drob : drawable_objects_) {
     TGraphMultiErrors* gr = (TGraphMultiErrors*)drob->GetPoints();
@@ -208,10 +209,10 @@ bool HeapPicture::IsGoodPlaceForLegend(std::array<float, 4> place) {
 
 void HeapPicture::ApplyPlaceForLegend(TLegend* leg, std::array<float, 4> place) {
   std::array<float, 4> place_user = TransformToUser(place);
-  leg -> SetX1(place_user.at(kX1));
-  leg -> SetY1(place_user.at(kY1));
-  leg -> SetX2(place_user.at(kX2));
-  leg -> SetY2(place_user.at(kY2));
+  leg -> SetX1(place_user.at(Rectangle::kX1));
+  leg -> SetY1(place_user.at(Rectangle::kY1));
+  leg -> SetX2(place_user.at(Rectangle::kX2));
+  leg -> SetY2(place_user.at(Rectangle::kY2));
   leg -> SetOption("br");
   leg -> SetBorderSize(0);
 }
