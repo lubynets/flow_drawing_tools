@@ -63,7 +63,7 @@ public:
     Picture::draw_zero_line = draw_zero_line;
   }
   const TMultiGraph* GetStack() const { return stack_; }
-  void SetAutoLegend(bool auto_legend) { auto_legend_ = auto_legend; }
+  void SetAutoLegend(bool auto_legend=true) { auto_legend_ = auto_legend; }
   void AddText( TLatex text, float size=0.04, int font=62 );
   void AddText( std::string text, std::pair<float, float> intramargin_xy={0.03, 0.92}, float size=0.04, int font=62 );
   std::vector<TLatex*> GetTexts() const { return texts_; }
@@ -105,7 +105,7 @@ protected:
   bool OverlapWithGraph(TGraphMultiErrors* graph, std::array<float, 4> rect2) const;
   static std::pair<float, float> GetOptimalLegendSize(TLegend* leg) ;
   template <typename T>
-  void ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec={-1});
+  void ClearVectorOfObjects(std::vector<T>& voo, std::vector<int> vec={-1});
   
   std::string name_;
   std::array<int, 2> resolution_;
@@ -125,7 +125,7 @@ protected:
   bool is_log_y{false};
   bool is_log_x{false};
   bool is_log_z{false};
-  bool auto_legend_{true};
+  bool auto_legend_{false};
   
   float xmin_ =  std::numeric_limits<float>::max();
   float xmax_ = -std::numeric_limits<float>::max();

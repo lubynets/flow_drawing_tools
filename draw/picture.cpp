@@ -199,10 +199,13 @@ void Picture::ClearLegends(std::vector<int> vec) {
 
 void Picture::ClearTexts(std::vector<int> vec) {
   ClearVectorOfObjects(texts_, vec);
+  ClearVectorOfObjects(text_fonts_, vec);
+  ClearVectorOfObjects(text_sizes_, vec);
+  ClearVectorOfObjects(text_intramargin_xy_, vec);
 }
 
 template <typename T>
-void Picture::ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec) {
+void Picture::ClearVectorOfObjects(std::vector<T>& voo, std::vector<int> vec) {
   if(vec.size()==1 && vec.at(0) == -1) {
     vec.resize(voo.size());
     std::iota(vec.begin(), vec.end(), 0); // fill vec with 0,1,2,3...
@@ -213,7 +216,6 @@ void Picture::ClearVectorOfObjects(std::vector<T*>& voo, std::vector<int> vec) {
       std::cout << "Warning: Picture::ClearVectorOfObjects() - required element " <<
                    vv << " to be erased is out of vector's size\n";
     }
-    delete voo.at(vv);
     voo.erase(voo.begin() + vv);
   }
 }
