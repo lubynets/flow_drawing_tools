@@ -78,7 +78,9 @@ void HeapPicture::DrawPad(TVirtualPad* pad) {
   }
   for(auto legend : legends_) {
     assert(legend);
-    CustomizeLegend(legend);
+    if(legends_.size()==1 && is_customize_legend_) {
+      ExeCustomizeLegend(legend);
+    }
     legend->Draw("same");
   }
 }
@@ -119,7 +121,7 @@ void HeapPicture::FillStackWithDrawableObjects() {
   }
 }
 
-void HeapPicture::CustomizeLegend(TLegend* leg) {
+void HeapPicture::ExeCustomizeLegend(TLegend* leg) {
   
   const float one = 1.;
   const float hspace = 0.01;

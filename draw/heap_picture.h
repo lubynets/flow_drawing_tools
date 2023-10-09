@@ -30,7 +30,7 @@ public:
   void SetRelErrorThreshold(float val) { relative_error_threshold_ = val; }
   void Draw() override;
   void DrawPad(TVirtualPad* pad = nullptr) override;
-  void CustomizeLegend(TLegend* leg) override;
+  void ExeCustomizeLegend(TLegend* leg) override;
 
 protected:
   bool IsGoodPlaceForLegend(std::array<float, 4> place) const;

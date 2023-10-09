@@ -80,7 +80,8 @@ public:
   void CustomizeYRange(float part=0.9);
   void CustomizeXRangeWithLimits(float lo, float hi, float part=1.);
   void CustomizeYRangeWithLimits(float lo, float hi, float part=0.9);
-  virtual void CustomizeLegend(TLegend* leg) {}
+  void SetIsCustomizeLegend(bool is=true) { is_customize_legend_ = is; }
+  virtual void ExeCustomizeLegend(TLegend* leg) {}
   
   void SetGridX() { canvas_->SetGridx(); }
   void SetGridY() { canvas_->SetGridy(); }
@@ -126,6 +127,7 @@ protected:
   bool is_log_x{false};
   bool is_log_z{false};
   bool auto_legend_{false};
+  bool is_customize_legend_{false};
   
   float xmin_ =  std::numeric_limits<float>::max();
   float xmax_ = -std::numeric_limits<float>::max();

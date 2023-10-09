@@ -37,7 +37,8 @@ public:
   void SetErrorOption(const std::string &error_option);
   void ShiftXaxis( float value );
   void SlightShiftXAxis( float value );
-  void SetIsFillSysErrors(const std::vector<bool>& value={true}) { is_sys_errors_ = value; }
+  void SetIsFillSysErrors(bool value=true) { is_sys_errors_ = {value}; }
+  void SetIsFillSysErrors(const std::vector<bool>& value) { is_sys_errors_ = value; }
   void RenameAxis(const std::string& from, const std::string& to);
 
 protected:
