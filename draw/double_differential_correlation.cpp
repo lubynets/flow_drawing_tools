@@ -4,9 +4,8 @@
 
 #include "double_differential_correlation.h"
 
+#include "Helper.h"
 #include "QnToolsHelper.h"
-
-#include <iomanip>
 
 void DoubleDifferentialCorrelation::Calculate() {
   correlation_.SetErrors(error_type_);
@@ -30,8 +29,6 @@ void DoubleDifferentialCorrelation::Calculate() {
     auto hi = slice_axis_.GetUpperBinEdge(slice_bin);
     auto proj_container = correlation_.Select( {name, 1, lo, hi} );
     proj_container = proj_container.Projection({projection_axis_.Name()});
-    lo += slice_axis_shift_;
-    hi += slice_axis_shift_;
     std::string graph_name{ name+"_"+std::to_string(slice_bin) };
     if(draw_errors_as_mean_.first == false) {
       projection_points_.push_back( Qn::ToTGraph( proj_container ) );
@@ -56,12 +53,12 @@ void DoubleDifferentialCorrelation::Calculate() {
     } else {
       projection_points_.push_back( ErrorsToTGraph(proj_container, draw_errors_as_mean_.second) );
     }
+    lo += slice_axis_shift_;
+    hi += slice_axis_shift_;
     projection_points_.back()->SetName( graph_name.c_str() );
-    std::ostringstream stream_lo;
-    stream_lo << std::setprecision(2) << lo;
-    std::ostringstream stream_hi;
-    stream_hi << std::setprecision(2) << hi;
-    std::string title{ stream_lo.str()+" - "+stream_hi.str() };
+    std::string string_lo = Helper::to_string_with_precision(lo, slice_axis_precision_);
+    std::string string_hi = Helper::to_string_with_precision(hi, slice_axis_precision_);
+    std::string title{ string_lo +" - " + string_hi };
     projection_points_.back()->SetTitle(title.c_str());
   }
   FillGraphs();

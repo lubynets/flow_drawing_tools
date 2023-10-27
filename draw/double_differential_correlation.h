@@ -102,6 +102,7 @@ public:
   void SetDrawErrorAsMean( bool is_draw, bool multiply_by_sqrt_N=false ) { draw_errors_as_mean_.first = is_draw; draw_errors_as_mean_.second = multiply_by_sqrt_N; }
   void SetMeanType(Qn::Stat::ErrorType type);
   void SetCalculateSystematicsFromVariation( bool is = true) { calculate_systematics_from_variation_ = is; }
+  void SetSliceAxisPrecision(float value) { slice_axis_precision_ = value; }
   void RenameAxis(const std::string& from, const std::string& to);
 
   friend DoubleDifferentialCorrelation Plus(const DoubleDifferentialCorrelation& lhs, const DoubleDifferentialCorrelation& rhs);
@@ -119,6 +120,7 @@ protected:
   Qn::AxisD projection_axis_;
   Qn::AxisD slice_axis_;
   float slice_axis_shift_{0};
+  float slice_axis_precision_{2};
   std::vector<TGraphErrors*> projection_points_;
   std::vector<TGraphErrors*> combinations_points_;
   std::string slice_variable_name_;
