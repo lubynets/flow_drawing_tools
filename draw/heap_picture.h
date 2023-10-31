@@ -35,6 +35,7 @@ public:
 protected:
   bool IsGoodPlaceForLegend(std::array<float, 4> place) const;
   void ApplyPlaceForLegend(TLegend* leg, std::array<float, 4> place);
+  void GetRidOfNaNs();
 
   std::vector<DrawableObject*> drawable_objects_;
   float relative_error_threshold_{-1.};

@@ -119,6 +119,23 @@ void HeapPicture::FillStackWithDrawableObjects() {
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");
     }
   }
+  GetRidOfNaNs();
+}
+
+void HeapPicture::GetRidOfNaNs() {
+  if(!(stack_ != nullptr && stack_->GetListOfGraphs() != nullptr)) {
+    std::string msg = "Warning: HeapPicture::GetRidOfNaNs() - ";
+    msg += "!(stack_ != nullptr && stack_->GetListOfGraphs() != nullptr)\n";
+    std::cout << msg;
+    return;
+  }
+
+  for(int iGr=0; iGr<stack_->GetListOfGraphs()->GetEntries(); iGr++) {
+    auto gr = (TGraph*)stack_->GetListOfGraphs()->At(iGr);
+    for(int iP=0; iP<gr->GetN(); iP++) {
+      if(std::isnan(gr->GetPointY(iP))) gr->RemovePoint(iP);
+    }
+  }
 }
 
 void HeapPicture::ExeCustomizeLegend(TLegend* leg) {
