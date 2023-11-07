@@ -43,7 +43,7 @@ public:
   TF1 *GetFit() const { return fit_; }
   void SetStyle( int color, int marker ){ color_=color; marker_=marker; }
   bool IsLine(){ return marker_ < 0; }
-  bool IsFillLine() const { return is_fill_line_; }
+  bool IsFillLine() const { return fill_line_alpha_ > 0; }
   void SavePoints(){ points_->Write(); }
   std::string GetTitle() { return title_;}
   void SetTitle(const std::string &title) { title_ = title; }
@@ -51,13 +51,13 @@ public:
   void SetErrorOption(const std::string &error_option) {
     error_option_ = error_option;
   }
-  void SetIsFillLine(bool value=true) { is_fill_line_ = value; }
+  void SetIsFillLine(float alpha=0.3) { fill_line_alpha_ = alpha; }
 
 protected:
   void SetMarkerStyle();
   int color_{kBlack};
   int marker_{kFullCircle};
-  bool is_fill_line_{false};
+  float fill_line_alpha_{-1};
   TF1* fit_{};
   TGraphMultiErrors* points_{nullptr};
   std::string error_option_{"Z"};

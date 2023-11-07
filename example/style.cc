@@ -12,6 +12,8 @@ gStyle->SetFrameLineWidth(4);
 gStyle->SetMarkerSize(2);
 gStyle->SetLineWidth(3);
 
+gStyle->SetNdivisions(206, "xyz");
+
 gStyle->SetTitleSize(0.035, "X");
 gStyle->SetTitleSize(0.035, "Y");
 gStyle->SetTitleSize(0.01, "Z");

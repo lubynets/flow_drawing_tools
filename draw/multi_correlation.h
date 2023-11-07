@@ -33,7 +33,7 @@ public:
   Correlation* GetCorrelation(int i) { return correlations_.at(i); }
   void SetMarker(int marker) { marker_ = marker; }
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
-  void SetIsFillLines(const std::vector<bool>& is={true}) { is_fill_lines_ = is; }
+  void SetIsFillLines(const std::vector<float>& alphas={0.3}) { fill_line_alpha_ = alphas; }
   void SetErrorOption(const std::string &error_option);
   void ShiftXaxis( float value );
   void SlightShiftXAxis( float value );
@@ -46,7 +46,7 @@ protected:
   std::vector<bool> is_sys_errors_{false};
   std::vector<Correlation*> correlations_;
   std::vector<int> markers_;
-  std::vector<bool> is_fill_lines_{false};
+  std::vector<float> fill_line_alpha_{-1};
   int marker_{kFullCircle};
   std::vector<int> palette_{
       kPink,

@@ -28,11 +28,11 @@ void MultiCorrelation::ApplyStyle() {
   int i=0;
   if( markers_.size() == 1 ) markers_ = std::vector<int>(correlations_.size(), markers_.front());
   if(is_sys_errors_.size() == 1 ) is_sys_errors_ = std::vector<bool>(correlations_.size(), is_sys_errors_.front());
-  if( is_fill_lines_.size() == 1 ) is_fill_lines_ = std::vector<bool>(correlations_.size(), is_fill_lines_.front());
+  if( fill_line_alpha_.size() == 1 ) fill_line_alpha_ = std::vector<float>(correlations_.size(), fill_line_alpha_.front());
   for( auto correlation : correlations_ ){
     correlation->SetStyle(colors.at(i), markers_.at(i));
     correlation->SetCalculateSystematicsFromVariation(is_sys_errors_.at(i));
-    correlation->SetIsFillLine(is_fill_lines_.at(i));
+    correlation->SetIsFillLine(fill_line_alpha_.at(i));
     ++i;
   }
 }

@@ -88,7 +88,7 @@ void DoubleDifferentialCorrelation::FillGraphs() {
     if(calculate_systematics_from_variation_) projections_.back()->SetSysErrorPoints( combinations_points_.at(i) );
     projections_.back()->SetTitle(graph->GetTitle());
     projections_.back()->SetStyle(colors.at(i), marker_);
-    projections_.back()->SetIsFillLine(is_fill_line_);
+    projections_.back()->SetIsFillLine(fill_line_alpha_);
     projections_.back()->SetErrorOption(error_option_);
     graph->SetLineColor(colors.at(i));
     graph->SetMarkerColor(colors.at(i));
