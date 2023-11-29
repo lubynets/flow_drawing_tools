@@ -99,6 +99,7 @@ void HeapPicture::FillStackWithDrawableObjects() {
     }
   }
 
+  auto* mgr_markers = new TMultiGraph();
   for( auto obj : drawable_objects_ ){
     if( obj->IsLine() ) {
       std::string opt;
@@ -112,9 +113,17 @@ void HeapPicture::FillStackWithDrawableObjects() {
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"L");
     } else {
-      std::string opt{"P+" + obj->GetErrorOption()};
-      if(obj->GetPoints()->GetNYErrors()>1) opt += "; 2";
-      stack_->Add(obj->GetPoints(), opt.c_str());
+      if(obj->GetPoints()->GetNYErrors()>1) {
+        if(!is_pull_markers_on_top_) {
+          stack_->Add(obj->GetPoints(), "P; 2");
+        } else {
+          stack_->Add(obj->GetPoints(), " ; 2");
+          mgr_markers->Add(obj->GetPoints(), "P; X");
+        }
+      } else {
+        stack_->Add(obj->GetPoints(), "P");
+      }
+      stack_->Add(mgr_markers);
       if( auto_legend_ )
         legends_.back()->AddEntry(obj->GetPoints(), obj->GetTitle().c_str(),"P");
     }

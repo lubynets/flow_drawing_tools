@@ -31,6 +31,7 @@ public:
   void Draw() override;
   void DrawPad(TVirtualPad* pad = nullptr) override;
   void ExeCustomizeLegend(TLegend* leg) override;
+  void SetIsPullMarkersOnTop(bool is=true) { is_pull_markers_on_top_ = is; }
 
 protected:
   bool IsGoodPlaceForLegend(std::array<float, 4> place) const;
@@ -39,6 +40,7 @@ protected:
 
   std::vector<DrawableObject*> drawable_objects_;
   float relative_error_threshold_{-1.};
+  bool is_pull_markers_on_top_{false};
 
   std::pair<float, float> GetYLimits(TGraphMultiErrors* gr) const;
   void FillStackWithDrawableObjects();
