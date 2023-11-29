@@ -13,7 +13,11 @@ void DrawableObject::SetMarkerStyle() {
     points_->SetLineStyle(-marker_);
   points_->SetMarkerColor(color_);
   points_->SetLineColor(color_);
-  points_->SetFillColorAlpha(color_, fill_line_alpha_);
+  if(fill_line_alpha_>0) {
+    points_->SetFillColorAlpha(color_, fill_line_alpha_);
+  } else {
+    points_->SetFillColorAlpha(color_, 0.3);
+  }
   if( fit_ )
     fit_->SetLineColor(color_);
 }
