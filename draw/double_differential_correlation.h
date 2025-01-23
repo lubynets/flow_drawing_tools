@@ -87,6 +87,7 @@ public:
   void SetIsFillLine(float alpha=0.3) { fill_line_alpha_ = alpha; }
   void SetPalette(const std::vector<int> &palette) { palette_ = palette; }
   void SetBiasPalette(bool value=true) { bias_palette_ = value; }
+  void SetIsVerbose(bool value=true) { is_verbose_ = value; }
   void Calculate();
   void SaveToFile( const std::string& file_name );
   void SetErrorOption(const std::string &error_option);
@@ -115,6 +116,7 @@ protected:
   void FillGraphs();
   void ExeShiftProjectionAxis();
   void ExeSlightShiftProjectionAxis();
+  void RenameAxisDCSM(const std::string& from, const std::string& to, Qn::DataContainerStatMagic* dc);
   Qn::DataContainerStatMagic correlation_;
   std::vector<Qn::DataContainerStatMagic> combinations_;
   Qn::AxisD projection_axis_;
@@ -134,6 +136,7 @@ protected:
   std::pair<float, float> slight_shift_projection_axis_{0.f, 0.f};
   std::vector<int> palette_{};
   bool bias_palette_{false};
+  bool is_verbose_{false};
   std::pair<bool, bool> draw_errors_as_mean_{false, false};  // first: draw error or not; second: if draw - multiply by sqrt(Neff) or not
   Qn::Stat::ErrorType error_type_{Qn::Stat::ErrorType::BOOTSTRAP};
 #ifdef DiscriminatorMode

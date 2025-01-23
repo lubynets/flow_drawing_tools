@@ -20,6 +20,7 @@ public:
   };
   ~MultiCorrelation() override = default;
   void AddCorrelation( const std::string& file, const std::vector<std::string>& objects, const std::string& title );
+  void AddCorrelation( Correlation* correlation ) { correlations_.push_back(new Correlation(*correlation)); }
   void Scale( double scale );
   void Rebin( const std::vector<Qn::AxisD>& axes);
   void Select( const std::vector<Qn::AxisD>& axes);

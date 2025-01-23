@@ -8,6 +8,7 @@
 #include "QnToolsHelper.h"
 
 void DoubleDifferentialCorrelation::Calculate() {
+  if(is_verbose_) std::cout << "DoubleDifferentialCorrelation::Calculate() start\n";
   correlation_.SetErrors(error_type_);
   for( auto& container : combinations_ ) {
     container.SetErrors(error_type_);
@@ -62,6 +63,7 @@ void DoubleDifferentialCorrelation::Calculate() {
     projection_points_.back()->SetTitle(title.c_str());
   }
   FillGraphs();
+  if(is_verbose_) std::cout << "DoubleDifferentialCorrelation::Calculate() finish\n";
 }
 void DoubleDifferentialCorrelation::FillGraphs() {
   std::vector<int> colors;
@@ -190,14 +192,21 @@ void DoubleDifferentialCorrelation::DivideValueByError() {
 }
 
 void DoubleDifferentialCorrelation::RenameAxis(const std::string& from, const std::string& to) {
-  std::vector<Qn::AxisD>& axes = correlation_.GetAxes();
+  RenameAxisDCSM(from, to, &correlation_);
+  for(auto& co : combinations_) {
+    RenameAxisDCSM(from, to, &co);
+  }
+}
+
+void DoubleDifferentialCorrelation::RenameAxisDCSM(const std::string& from, const std::string& to, Qn::DataContainerStatMagic* dc) {
+  std::vector<Qn::AxisD>& axes = dc->GetAxes();
   for(Qn::AxisD& ax : axes) {
     if(ax.Name() == from) {
       ax.SetName(to);
       return;
     }
   }
-  throw std::runtime_error("DoubleDifferentialCorrelation::RenameAxis() - axis from is absent");
+  throw std::runtime_error("DoubleDifferentialCorrelation::RenameAxisDCSM() - axis from is absent");
 }
 
 #ifdef DiscriminatorMode
